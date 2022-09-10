@@ -7,11 +7,23 @@ import { useRef, useState } from 'react';
 import styles from './Carousel.module.scss';
 
 const cx = classnames.bind(styles);
-function Carousel({ items = [], showArrowButton = true, loop = true, thumbWidth = 82 }) {
+function Carousel({
+    items = [],
+    defaultItems,
+    imageTop = true,
+    showArrowButton = true,
+    loop = true,
+    popup = false,
+    height,
+    thumbWidth = 82,
+}) {
     const listImage = useRef(null);
     const btnLeft = useRef(null);
     const btnRight = useRef(null);
     const [currentIndex, setCurrentIndex] = useState(0);
+    const [showPopup, setShowPopup] = useState(() => {
+        return !popup;
+    });
 
     const handleClickNext = (step) => {
         setCurrentIndex((prevState) => {
@@ -27,7 +39,6 @@ function Carousel({ items = [], showArrowButton = true, loop = true, thumbWidth 
             } else if (newIndex < 0) {
                 newIndex = items.length - 1;
             }
-            console.log(newIndex);
             if (newIndex > 0 && newIndex < items.length - 1) {
                 btnLeft.current.style.display = 'inline-flex';
                 btnRight.current.style.display = 'inline-flex';
@@ -35,9 +46,21 @@ function Carousel({ items = [], showArrowButton = true, loop = true, thumbWidth 
             return newIndex;
         });
     };
-
+    function checkURL(url) {
+        return url.match(/\.(jpeg|jpg|gif|png)$/) != null;
+    }
     const handleTransform = () => {
-        return `translate(${-currentIndex * (thumbWidth + 10)}px)`;
+        if (currentIndex + 1 > defaultItems) {
+            return `translate(${-(currentIndex - defaultItems + 1) * (thumbWidth + 10)}px)`;
+        }
+    };
+
+    const handleShowPopup = (index) => {
+        if (popup && currentIndex === index) {
+            setShowPopup(!showPopup);
+        } else {
+            setShowPopup(true);
+        }
     };
 
     useEffect(() => {
@@ -46,45 +69,81 @@ function Carousel({ items = [], showArrowButton = true, loop = true, thumbWidth 
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
     return (
-        <div className={cx('carousel-swapper')}>
-            {/* <video
-                className={cx('left-image')}
-                playsInline
-                loop
-                muted
-                controls
-                alt="All the devices"
-                src={video}
-                // ref={videoEl}
-            /> */}
-            <img src={items[currentIndex].imageURL} alt="images" className={cx('left-image')} />
-            <div className={cx('left-image-list-swapper')}>
-                <ul
-                    ref={listImage}
-                    className={cx('left-image-list')}
-                    // style={{ transform: `translate(${-currentIndex * 92}px)` }}
-                    style={{ transform: handleTransform() }}
-                >
-                    {/* <video
-                        className={cx('left-image-list__item', 'left-image-list__item--active')}
-                        alt="All the devices"
-                        src={video}
-                    /> */}
-                    {items.map((item, index) => (
-                        <img
-                            key={index}
-                            src={item.imageURL}
-                            alt="images"
-                            className={cx(
-                                'left-image-list__item',
-                                currentIndex === index ? 'left-image-list__item--active' : null,
-                            )}
-                            style={{ width: thumbWidth }}
-                            onClick={() => handleClickNext(index)}
+        <div
+            className={cx('carousel-swapper')}
+            style={{ display: 'flex', flexDirection: imageTop ? 'column' : 'column-reverse' }}
+        >
+            <div style={{ display: showPopup ? 'block' : 'none' }}>
+                {imageTop ? (
+                    checkURL(items[currentIndex].imageURL) ? (
+                        <img src={items[currentIndex].imageURL} alt="images" className={cx('left-image')} />
+                    ) : (
+                        <video
+                            className={cx('left-image')}
+                            controls
+                            autoPlay
+                            playsInline
+                            loop
+                            muted
+                            alt="All the devices"
+                            src={items[currentIndex].imageURL}
+                            style={{ height }}
                         />
-                    ))}
+                    )
+                ) : checkURL(items[currentIndex].imageURL) ? (
+                    <img src={items[currentIndex].imageURL} alt="images" className={cx('left-image')} />
+                ) : (
+                    <video
+                        className={cx('left-image')}
+                        controls
+                        autoPlay
+                        playsInline
+                        loop
+                        muted
+                        alt="All the devices"
+                        src={items[currentIndex].imageURL}
+                        style={{ height }}
+                    />
+                )}
+            </div>
+            <div className={cx('left-image-list-swapper')}>
+                <ul ref={listImage} className={cx('left-image-list')} style={{ transform: handleTransform() }}>
+                    {items.map((item, index) =>
+                        checkURL(item.imageURL) ? (
+                            <img
+                                key={index}
+                                src={item.imageURL}
+                                alt="images"
+                                className={cx(
+                                    'left-image-list__item', // && popup
+                                    currentIndex === index && showPopup ? 'left-image-list__item--active' : null,
+                                )}
+                                width={thumbWidth}
+                                height={thumbWidth}
+                                onClick={() => {
+                                    handleShowPopup(index);
+                                    setCurrentIndex(index);
+                                }}
+                            />
+                        ) : (
+                            <video
+                                key={index}
+                                className={cx(
+                                    'left-image-list__item',
+                                    currentIndex === index && showPopup ? 'left-image-list__item--active' : null,
+                                )}
+                                alt="All the devices"
+                                src={item.imageURL}
+                                width={thumbWidth}
+                                height={thumbWidth}
+                                onClick={() => {
+                                    handleShowPopup(index);
+                                    setCurrentIndex(index);
+                                }}
+                            />
+                        ),
+                    )}
                 </ul>
                 {showArrowButton && (
                     <>

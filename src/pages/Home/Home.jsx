@@ -6,9 +6,11 @@ import Banner from '~/components/Banner/Banner';
 import { Category } from '~/components/Category';
 import ProductItem from '~/components/Product/ProductItem';
 import { TopSearch } from '~/components/TopSearch';
+import { Brand } from '~/components/Brand';
 import styles from './Home.module.scss';
 import toast from '~/assets/js/toast-message';
-import * as authService from '~/services/authService';
+import * as bannerService from '~/services/bannerService';
+import { useState } from 'react';
 
 const cx = classnames.bind(styles);
 function Home() {
@@ -23,8 +25,9 @@ function Home() {
             sold: '12k', //12k
         });
     }
-
     const location = useLocation();
+    const [mainBanners, setMainBanners] = useState([]);
+    const [listHorizontal, setListHorizontal] = useState([]);
     useEffect(() => {
         const icons = {
             success: 'fa-solid fa-circle-check',
@@ -50,6 +53,37 @@ function Home() {
             });
             console.log(window.history.replaceState({}, {}));
         }
+
+        //fetch API banner
+        async function fetchApi() {
+            await bannerService
+                .getAll()
+                .then((res) => {
+                    const data = res.data.data;
+                    setMainBanners(() => {
+                        const list = [];
+                        data.filter((item) => {
+                            return (
+                                (item.type === 1 || item.type === 2) &&
+                                list.push({ type: item.type, url: item.photo.path })
+                            );
+                        });
+                        return list;
+                    });
+                    setListHorizontal(() => {
+                        const list = [];
+                        data.filter((item) => {
+                            return item.type === 3 && list.push({ type: item.type, url: item.photo.path });
+                        }, list);
+                        return list;
+                    });
+                })
+                .catch((error) => {
+                    alert('error load banner', error);
+                });
+        }
+        fetchApi();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -57,13 +91,13 @@ function Home() {
         <>
             <div className={cx('container-banner')}>
                 <div className="grid">
-                    <Banner />
+                    <Banner data={mainBanners} />
                 </div>
             </div>
             <div className={cx('container-body')}>
                 <div className="grid">
                     <Category />
-                    <Banner type="simple-banner" />
+                    <Banner type="horizontal" data={listHorizontal} />
                     <TopSearch />
                     <div className={cx('section-suggest')}>
                         <div className={cx('section-suggest-header')}>
@@ -79,6 +113,7 @@ function Home() {
                             </div>
                         </div>
                     </div>
+                    <Brand listBanner={listHorizontal} />
                 </div>
             </div>
         </>

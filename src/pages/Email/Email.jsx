@@ -1,10 +1,12 @@
 import classnames from 'classnames/bind';
 import { useState } from 'react';
-import { useSelector } from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 
 import Button from '~/components/Button';
 import styles from './Email.module.scss';
 import * as authService from '~/services/authService';
+import { update } from '~/slices/authSlice';
+import { toastError, toastSuccess } from '~/assets/js/toast-message';
 
 const cx = classnames.bind(styles);
 function Email() {
@@ -13,6 +15,7 @@ function Email() {
     const [errorMessage, setErrorMessage] = useState('');
     const regex =
         /^(([^<>()[\]\.,;:\s@\"]+(\.[^<>()[\]\.,;:\s@\"]+)*)|(\".+\"))@(([^<>()[\]\.,;:\s@\"]+\.)+[^<>()[\]\.,;:\s@\"]{2,})$/i;
+    const dispatch = useDispatch();
 
     const handleChangeEmail = (e) => {
         var newEmail = e.target.value;
@@ -26,8 +29,14 @@ function Email() {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        const res = await authService.update( email);
-        console.log(res);
+        const res = await authService.update({ email });
+        if (res.status === 200) {
+            const action = update(res.data);
+            dispatch(action);
+            toastSuccess('Update email successfully!');
+        } else {
+            toastError('Update fail!');
+        }
     };
 
     return (

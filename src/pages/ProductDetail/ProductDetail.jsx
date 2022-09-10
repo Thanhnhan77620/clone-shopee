@@ -20,6 +20,8 @@ import FilterComment from '~/components/FilterComment';
 import RatingStar from '~/components/RatingStar';
 import video from '~/assets/videos/video.mp4';
 import Carousel from '~/components/Carousel';
+import * as bannerService from '~/services/bannerService';
+import { useState } from 'react';
 
 const cx = classnames.bind(styles);
 function ProductDetail(props) {
@@ -30,11 +32,20 @@ function ProductDetail(props) {
     }
 
     const items = [];
-    for (let i = 0; i < 7; i++) {
+    items.push({
+        id: 0,
+        name: 'Balo nam nữ giá rẻ, thời trang đi học nhiều ngăn siêu nhẹ phong cách ulzzang, đẹp đựng laptop ULZ015',
+        imageURL: 'https://play-ws.vod.shopee.com/c3/98934353/103/A3oxOAihAOwQjfgIER0FACc.mp4',
+        price: 200000,
+        sale: 20,
+        sold: '12k', //12k
+    });
+
+    for (let i = 1; i < 7; i++) {
         items.push({
             id: i,
             name: 'Balo nam nữ giá rẻ, thời trang đi học nhiều ngăn siêu nhẹ phong cách ulzzang, đẹp đựng laptop ULZ015',
-            imageURL: 'https://cf.shopee.vn/file/9e40b129903c4f5e3a48ef12cc69796d_tn',
+            imageURL: 'https://ecomerce-shoppe.herokuapp.com/api/v1/files/69f1c42e-7360-421a-ba6d-ec84b3ebde78.jpg',
             price: 200000,
             sale: 20,
             sold: '12k', //12k
@@ -42,14 +53,15 @@ function ProductDetail(props) {
     }
 
     const videoEl = useRef(null);
-    const attemptPlay = () => {
-        videoEl &&
-            videoEl.current &&
-            videoEl.current.play().catch((error) => {
-                console.error('Error attempting to play', error);
-            });
-    };
+
     useEffect(() => {
+        const attemptPlay = () => {
+            videoEl &&
+                videoEl.current &&
+                videoEl.current.play().catch((error) => {
+                    console.error('Error attempting to play', error);
+                });
+        };
         attemptPlay();
     }, []);
 
@@ -95,7 +107,7 @@ function ProductDetail(props) {
                                 <FontAwesomeIcon icon={faAngleRight} />
                             </div>
                         </div> */}
-                        <Carousel items={items} />
+                        <Carousel items={items} defaultItems={5} />
 
                         {/* Like icon */}
                         <div className={cx('left-like')}>
