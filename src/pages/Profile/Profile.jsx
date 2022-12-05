@@ -283,11 +283,9 @@ function Profile() {
                 <div className={cx('body-right')}>
                     <div className={cx('body-right-wrap')}>
                         <img src={user.photo && user.photo.path} alt="Avatar" className={cx('form-avatar')} />
-
                         <input ref={inputRef} onChange={handleFileChange} type="file" accept=".jpg,.jpeg,.png" hidden />
-
                         <Button normal className={cx('btn-upload')} onClick={handleUpload}>
-                            Lưu
+                            Chọn ảnh
                         </Button>
                         <div className={cx('description')}>Dụng lượng file tối đa 1 MB Định dạng:.JPEG, .PNG</div>
                     </div>

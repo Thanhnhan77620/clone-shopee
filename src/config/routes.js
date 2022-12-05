@@ -11,7 +11,8 @@ const routes = {
     },
     search: 'search',
     product_detail: 'detail',
-    confirm_email: '/confirm-email'
+    confirm_email: '/confirm-email',
+    category_detail: 'category_detail',
 };
 
 export default routes;

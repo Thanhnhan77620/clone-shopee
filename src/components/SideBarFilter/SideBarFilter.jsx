@@ -28,6 +28,10 @@ function SideBarFilter() {
                     </li>
                 </ul>
 
+                <h3 className={cx('category__heading')}>
+                    <i className={cx('category__heading-icon', 'fa-solid fa-filter')}></i>
+                    BỘ LỌC TÌM KIẾM
+                </h3>
                 <div className={cx('brand-group')}>
                     <span className={cx('brand-header')}>Thương Hiệu</span>
                     <ul className={cx('brand-list')}>

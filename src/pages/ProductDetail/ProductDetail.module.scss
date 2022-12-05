@@ -241,6 +241,7 @@
         border: none;
         padding: 0 5px;
         width: 114px;
+        text-align: center;
         &:focus {
             outline: none;
         }
@@ -256,6 +257,10 @@
         cursor: pointer;
         color: var(--text-light-color);
         background-color: var(--white-color);
+
+        &:hover{
+            background-color: var(--background-color-hover);
+        }
 
         &.group-quantity-select__btn-left {
             border-right: 1px solid rgba(0, 0, 0, 0.09);
