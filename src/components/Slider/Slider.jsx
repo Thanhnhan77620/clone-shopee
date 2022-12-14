@@ -153,7 +153,7 @@ function Slider({
                     <div className={cx('carousel-swapper')}>
                         <ul className={cx('carousel-list')}>
                             {/* component carousel item here */}
-                            {listItem &&
+                            {listItem.length &&
                                 listItem.map((item, index) => (
                                     <CarouselItemComponent key={index} item={item} data-index={index} />
                                 ))}

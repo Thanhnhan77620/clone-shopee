@@ -8,17 +8,8 @@ import stylesCategoryItem from '../Category/CategoryItem/CategoryItem.module.scs
 
 const cx = classnames.bind(styles);
 const cxCategoryItem = classnames.bind(stylesCategoryItem);
-function Category() {
-    const data = [];
-    const item = {
-        name: 'máy tính & laptop máy tính & laptop máy tính & laptop máy tính & laptop',
-        imageURL: 'https://cf.shopee.vn/file/978b9e4cb61c611aaaf58664fae133c5_tn',
-    };
-    const total = 17;
-    for (let i = 1; i <= total; i++) {
-        data.push({ ...item, id: i - 1 });
-    }
-
+function Category({ data = [] }) {
+    console.log(data);
     return (
         <div className={cx('section-category')}>
             <Slider

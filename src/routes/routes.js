@@ -11,12 +11,11 @@ export const publicRoutes = [
     { path: config.routes.product_detail, component: ProductDetail },
     { path: config.routes.category_detail, component: CategoryDetail },
 
-    { path: config.routes.cart, component: Cart, layout: CartLayout },
-
 ];
 
 export const privateRoutes = [
     //cart layout
+    { path: config.routes.cart, component: Cart, layout: CartLayout },
 
     // //user layout
     { path: config.routes.user.profile, component: Profile, layout: UserLayout },

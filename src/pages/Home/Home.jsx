@@ -28,6 +28,8 @@ function Home() {
     const location = useLocation();
     const [mainBanners, setMainBanners] = useState([]);
     const [listHorizontal, setListHorizontal] = useState([]);
+    const [categories, setCategories] = useState([]);
+
     useEffect(() => {
         const icons = {
             success: 'fa-solid fa-circle-check',
@@ -82,8 +84,20 @@ function Home() {
                     alert('error load banner', error);
                 });
         }
-        fetchApi();
 
+        async function getCates() {
+            let data = [];
+            const item = {
+                name: 'máy tính & laptop máy tính & laptop máy tính & laptop máy tính & laptop',
+                imageURL: 'https://cf.shopee.vn/file/978b9e4cb61c611aaaf58664fae133c5_tn',
+            };
+            for (let i = 1; i <= 17; i++) {
+                data.push({ id: i, name: item.name, imageURL: item.imageURL });
+            }
+            setCategories(data);
+        }
+        getCates();
+        fetchApi();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -96,7 +110,7 @@ function Home() {
             </div>
             <div className={cx('container-body')}>
                 <div className="grid">
-                    <Category />
+                    <Category data={categories} />
                     <Banner type="horizontal" data={listHorizontal} />
                     <TopSearch />
                     <div className={cx('section-suggest')}>

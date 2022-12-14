@@ -13,11 +13,11 @@ function Banner({
     showThumbs = false,
     infiniteLoop = false,
     autoPlay = true,
-    showIndicators=false
-    
+    showIndicators = false,
 }) {
     const sliders = data.filter((item) => item.type === 1);
     const rightBanners = data.filter((item) => item.type === 2);
+
     switch (type) {
         case 'carousel':
             return (
@@ -70,7 +70,7 @@ function Banner({
                                         key={index}
                                         className={cx('banner-carousel-item')}
                                         style={{
-                                            backgroundImage: `url(${item.url})`,
+                                            backgroundImage: `url(${item.url.replace('\\', '/')})`,
                                             height,
                                         }}
                                     ></div>
