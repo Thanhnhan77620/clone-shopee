@@ -12,8 +12,8 @@ export const get = async (path, option = {}) => {
         const { data, status } = response;
         return { data, status };
     } catch (error) {
-        const { errors, status } = error.response.data
-        return { errors, status };
+        const { errors, statusCode } = error.response.data
+        return { errors, status: statusCode };
     }
 };
 
@@ -23,8 +23,9 @@ export const post = async (path, option = {}, config = {}) => {
         const { data, status } = response;
         return { data, status };
     } catch (error) {
-        const { errors, status } = error.response.data
-        return { errors, status };
+        console.log(error);
+        const { errors, statusCode } = error.response.data
+        return { errors, status: statusCode };
     }
 };
 
@@ -34,8 +35,8 @@ export const patch = async (path, option = {}, config = {}) => {
         const { data, status } = response;
         return { data, status };
     } catch (error) {
-        const { errors, status } = error.response.data
-        return { errors, status };
+        const { errors, statusCode } = error.response.data
+        return { errors, status: statusCode };
     }
 };
 
