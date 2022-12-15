@@ -100,7 +100,6 @@ function Home() {
         fetchApi();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
-
     return (
         <>
             <div className={cx('container-banner')}>
@@ -110,9 +109,9 @@ function Home() {
             </div>
             <div className={cx('container-body')}>
                 <div className="grid">
-                    <Category data={categories} />
+                    {/* <Category data={categories} /> */}
                     <Banner type="horizontal" data={listHorizontal} />
-                    <TopSearch />
+                    <TopSearch data={categories} />
                     <div className={cx('section-suggest')}>
                         <div className={cx('section-suggest-header')}>
                             <div className={cx('section-suggest-header__title')}>gợi ý hôm nay</div>
@@ -127,7 +126,7 @@ function Home() {
                             </div>
                         </div>
                     </div>
-                    <Brand listBanner={listHorizontal} />
+                    <Brand data={categories} listBanner={listHorizontal} />
                 </div>
             </div>
         </>

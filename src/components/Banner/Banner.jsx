@@ -36,7 +36,7 @@ function Banner({
                                         key={index}
                                         className={cx('banner-carousel-item')}
                                         style={{
-                                            backgroundImage: `url(${item.url})`,
+                                            backgroundImage: `url(${item.url.replace('\\', '/')})`,
                                             height,
                                         }}
                                     ></div>
@@ -50,7 +50,7 @@ function Banner({
                 <div className={cx('banner-container')}>
                     {data &&
                         data.map((item, index) => (
-                            <img key={index} src={item.url} alt="images" className={cx('banner-section')} />
+                            <img key={index} src={item.url.replace('\\', '/')} alt="images" className={cx('banner-section')} />
                         ))}
                 </div>
             );
@@ -81,7 +81,7 @@ function Banner({
                     <div className={cx('side-banner')}>
                         {rightBanners &&
                             rightBanners.map((item, index) => (
-                                <img key={index} className={cx('side-banner-item')} src={item.url} alt="images" />
+                                <img key={index} className={cx('side-banner-item')} src={item.url.replace('\\', '/')} alt="images" />
                             ))}
                     </div>
                 </div>

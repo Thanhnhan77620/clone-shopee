@@ -9,7 +9,6 @@ import stylesCategoryItem from '../Category/CategoryItem/CategoryItem.module.scs
 const cx = classnames.bind(styles);
 const cxCategoryItem = classnames.bind(stylesCategoryItem);
 function Category({ data = [] }) {
-    console.log(data);
     return (
         <div className={cx('section-category')}>
             <Slider
