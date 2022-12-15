@@ -10,7 +10,7 @@ const routes = {
         purchase: '/user/purchase',
     },
     search: 'search',
-    product_detail: 'detail',
+    product_detail: 'product/:id',
     confirm_email: '/confirm-email',
     category_detail: 'category_detail',
 };

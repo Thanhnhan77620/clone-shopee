@@ -9,12 +9,12 @@ import { formatMoney } from '~/utils';
 const cx = classnames.bind(styles);
 function ProductItem({ item }) {
     return (
-        <Link to="/detail" className={cx('product-item')}>
+        <Link to={`/product/${item.id}`} className={cx('product-item')}>
             {/* <!-- Product image --> */}
             <div
                 className={cx('product-item__img')}
                 style={{
-                    backgroundImage: `url(${item.imageURL})`,
+                    backgroundImage: `url(${item.image.path.replace('\\', '/')})`,
                 }}
             ></div>
 
@@ -33,7 +33,7 @@ function ProductItem({ item }) {
                 {/* <!-- Product action rating --> */}
                 <div className={cx('product-item__action')}>
                     <span className={cx('product-item__like', 'product-item__liked')}>
-                        {item.id % 2 ? (
+                        {item.likedCount ? (
                             <FontAwesomeIcon icon={faHeart} className={cx('product-item__like-icon', 'active')} />
                         ) : (
                             <FontAwesomeIcon icon={faHeart} className={cx('product-item__like-icon')} />
@@ -58,14 +58,16 @@ function ProductItem({ item }) {
                 </div> */}
 
                 {/* <!-- Product favourite --> */}
-                <div className={cx('product-item__favorite')}>
-                    <i className={cx('fas fa-check')}></i>
-                    <span>Yêu thích</span>
-                </div>
+                {!item.likedCount && (
+                    <div className={cx('product-item__favorite')}>
+                        <i className={cx('fas fa-check')}></i>
+                        <span>Yêu thích</span>
+                    </div>
+                )}
 
                 {/* <!-- Product sale off --> */}
                 <div className={cx('product-item__sale-off')}>
-                    <span className={cx('product-item__sale-off-percent')}>{item.sale}%</span>
+                    <span className={cx('product-item__sale-off-percent')}>{item.discount}%</span>
                     <span className={cx('product-item__sale-off-label')}>GIẢM</span>
                 </div>
             </div>

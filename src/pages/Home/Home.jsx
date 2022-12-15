@@ -1,16 +1,22 @@
+//react component
 import classnames from 'classnames/bind';
-import { useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useLocation } from 'react-router-dom';
 
+//custom component
 import Banner from '~/components/Banner/Banner';
 import { Category } from '~/components/Category';
 import ProductItem from '~/components/Product/ProductItem';
 import { TopSearch } from '~/components/TopSearch';
 import { Brand } from '~/components/Brand';
-import styles from './Home.module.scss';
 import toast from '~/assets/js/toast-message';
+
+//services
 import * as bannerService from '~/services/bannerService';
-import { useState } from 'react';
+import * as categoryService from '~/services/categoryService';
+
+//style
+import styles from './Home.module.scss';
 
 const cx = classnames.bind(styles);
 function Home() {
@@ -56,8 +62,8 @@ function Home() {
             console.log(window.history.replaceState({}, {}));
         }
 
-        //fetch API banner
-        async function fetchApi() {
+        //get banner
+        const getBanner = async () => {
             await bannerService
                 .getAll()
                 .then((res) => {
@@ -83,9 +89,10 @@ function Home() {
                 .catch((error) => {
                     alert('error load banner', error);
                 });
-        }
+        };
 
-        async function getCates() {
+        //get category
+        const getCate = async () => {
             let data = [];
             const item = {
                 name: 'máy tính & laptop máy tính & laptop máy tính & laptop máy tính & laptop',
@@ -94,12 +101,20 @@ function Home() {
             for (let i = 1; i <= 17; i++) {
                 data.push({ id: i, name: item.name, imageURL: item.imageURL });
             }
-            setCategories(data);
-        }
-        getCates();
-        fetchApi();
+            const repCate = await categoryService.getAll();
+            if (repCate.status === 200) {
+                repCate.data.data.forEach((cate) => {
+                    data.push({ id: cate.id, name: cate.name, imageURL: cate.logo.path });
+                });
+            }
+
+            setCategories(repCate);
+        };
+        getCate();
+        getBanner();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+
     return (
         <>
             <div className={cx('container-banner')}>
@@ -111,7 +126,7 @@ function Home() {
                 <div className="grid">
                     <Category data={categories} />
                     <Banner type="horizontal" data={listHorizontal} />
-                    <TopSearch data={categories} />
+                    <Brand listBanner={listHorizontal} />
                     <div className={cx('section-suggest')}>
                         <div className={cx('section-suggest-header')}>
                             <div className={cx('section-suggest-header__title')}>gợi ý hôm nay</div>
@@ -120,13 +135,13 @@ function Home() {
                             <div className="grid__row">
                                 {data.map((item) => (
                                     <div key={item.id} className="grid__column-2">
-                                        <ProductItem item={item} />
+                                        {/* <ProductItem item={item} /> */}
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </div>
-                    <Brand listBanner={listHorizontal} />
+                    <TopSearch data={data} />
                 </div>
             </div>
         </>

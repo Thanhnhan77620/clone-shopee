@@ -22,9 +22,16 @@ import video from '~/assets/videos/video.mp4';
 import Carousel from '~/components/Carousel';
 import * as bannerService from '~/services/bannerService';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
+
+//service
+import * as productService from '~/services/productService';
 
 const cx = classnames.bind(styles);
 function ProductDetail(props) {
+    const { id } = useParams();
+    const [productDetail, setProductDetail] = useState({});
+
     const listImage = 'https://cf.shopee.vn/file/3d6a3b229e348c5c78baddac823666ce';
     const data = [];
     for (let i = 0; i < 5; i++) {
@@ -62,7 +69,18 @@ function ProductDetail(props) {
                     console.error('Error attempting to play', error);
                 });
         };
+
+        const getProductById = async () => {
+            const productDetail = await productService.getProductById(id);
+            if (productDetail.status === 200) {
+                setProductDetail(productDetail.data.data);
+            }
+        };
+
+        getProductById();
+
         attemptPlay();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
     return (
@@ -237,9 +255,9 @@ function ProductDetail(props) {
                                 <div className={cx('card-layout-header')}>Top Sản Phẩm Bán Chạy</div>
                                 <div className={cx('card-layout-content')}>
                                     <div className={cx('card-layout-content__item-swapper')}>
-                                        {items.map((item) => (
+                                        {/* {items.map((item) => (
                                             <ProductItem key={item.id} item={item} />
-                                        ))}
+                                        ))} */}
                                     </div>
                                 </div>
                             </div>

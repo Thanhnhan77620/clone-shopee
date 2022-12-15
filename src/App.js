@@ -41,6 +41,7 @@ function App() {
                                     <Route
                                         key={index}
                                         path={route.path}
+                                        location={route.path}
                                         element={
                                             <Layout>
                                                 <Page />

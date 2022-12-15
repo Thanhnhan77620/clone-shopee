@@ -1,18 +1,27 @@
+//react component
 import classnames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faAngleDown, faCheck, faMagnifyingGlass, faCircleXmark, faSpinner } from '@fortawesome/free-solid-svg-icons';
-import { Link } from 'react-router-dom';
+import { createSearchParams, Link, useNavigate } from 'react-router-dom';
 import { useRef, useState, useEffect } from 'react';
 import HeadlessTippy from '@tippyjs/react/headless';
 
-import * as searchServices from '~/services/searchService';
+//custom component
 import { CartHistoryIcon } from '~/components/Icons';
-import styles from './SearchBox.module.scss';
 import { useDebounce } from '~/hooks';
+
+//service
+import * as searchServices from '~/services/searchService';
+import * as productService from '~/services/productService';
+
+//style
+import styles from './SearchBox.module.scss';
 
 const cx = classnames.bind(styles);
 
 function SearchBox(props) {
+    const navigate = useNavigate();
+
     const searchHistoryRef = useRef();
     const inputSearch = useRef();
 
@@ -52,15 +61,18 @@ function SearchBox(props) {
         }
 
         // call API name.startWith('search)
-        const fetchApi = async () => {
+        const productSearchHint = async () => {
             setLoading(true);
-            const searchResult = await searchServices.search(debouncedValue);
-            // setSearchResult(searchResult);
-            setData(searchResult);
+            const searchResult = await productService.searchHint({ keyword: debouncedValue });
             setLoading(false);
+            if (searchResult.status === 200) {
+                setData(searchResult.data);
+            } else {
+                setData([]);
+            }
         };
 
-        fetchApi();
+        productSearchHint();
     }, [debouncedValue]);
 
     const handleEnter = (e) => {
@@ -76,21 +88,20 @@ function SearchBox(props) {
         }
     };
 
-    function search() {
+    const search = () => {
         if (searchKey) {
-            console.log('searchKey', searchKey);
             // set localStorage
             let searchHistory = JSON.parse(localStorage.getItem('search-history')) || [];
-            if (searchHistory.length >= 10) {
-                searchHistory = searchHistory.slice(1);
+            if (searchHistory.findIndex((a) => a === searchKey.trim()) < 0) {
+                if (searchHistory.length >= 10) {
+                    searchHistory = searchHistory.slice(1);
+                }
+                searchHistory.push(searchKey.trim());
             }
-            searchHistory.push({ nickname: searchKey });
             localStorage.setItem('search-history', JSON.stringify(searchHistory));
-
-            // call api search name.contains('searchKey')
-            // ....
         }
-    }
+    };
+
     return (
         <div className={cx('header__search')}>
             <div className={cx('header__search-wrap')}>
@@ -119,12 +130,15 @@ function SearchBox(props) {
                             <ul className={cx('header__search-history-list')}>
                                 {data.map((item, index) => (
                                     <Link
-                                        to="/search"
+                                        to={`/search?keyword=${item}`}
                                         key={index}
-                                        onClick={() => (searchHistoryRef.current.style.display = 'none')}
+                                        onClick={() => {
+                                            searchHistoryRef.current.style.display = 'none';
+                                            // goToPosts();
+                                        }}
                                         className={cx('header__search-history-item')}
                                     >
-                                        {item.nickname}
+                                        {item}
                                     </Link>
                                 ))}
                             </ul>
