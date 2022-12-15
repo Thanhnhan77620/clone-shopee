@@ -11,13 +11,15 @@ const cxCategoryItem = classnames.bind(stylesCategoryItem);
 function Category({ data = [] }) {
     return (
         <div className={cx('section-category')}>
-            <Slider
-                CarouselHeaderComponent={CategoryHeader}
-                listItem={data}
-                CarouselItemComponent={CategoryItem}
-                cssCarouselItem={cxCategoryItem('carousel__item')}
-                infiniteLoop={true}
-            />
+            {data.length && (
+                <Slider
+                    CarouselHeaderComponent={CategoryHeader}
+                    listItem={data}
+                    CarouselItemComponent={CategoryItem}
+                    cssCarouselItem={cxCategoryItem('carousel__item')}
+                    infiniteLoop={true}
+                />
+            )}
         </div>
     );
 }

@@ -109,7 +109,7 @@ function Home() {
             </div>
             <div className={cx('container-body')}>
                 <div className="grid">
-                    {/* <Category data={categories} /> */}
+                    <Category data={categories} />
                     <Banner type="horizontal" data={listHorizontal} />
                     <TopSearch data={categories} />
                     <div className={cx('section-suggest')}>
@@ -126,7 +126,7 @@ function Home() {
                             </div>
                         </div>
                     </div>
-                    <Brand data={categories} listBanner={listHorizontal} />
+                    <Brand listBanner={listHorizontal} />
                 </div>
             </div>
         </>

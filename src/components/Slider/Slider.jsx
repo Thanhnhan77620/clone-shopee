@@ -29,8 +29,7 @@ function Slider({
         }
 
         const $ = document.querySelector.bind(document);
-        console.log(cssCarouselItem);
-        console.log($(`.${cssCarouselItem}`));
+
         const el = getParentElement($(`.${cssCarouselItem}`), `.${cx('category-swapper')}`);
         const btnNext = el.querySelector(parseToCss('carousel-arrow--next'));
         const btnPrev = el.querySelector(parseToCss('carousel-arrow--previous'));
@@ -143,7 +142,6 @@ function Slider({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listItem]);
-
     return (
         <div className={cx('category-swapper')}>
             {CarouselHeaderComponent && <CarouselHeaderComponent />}
@@ -154,12 +152,10 @@ function Slider({
                     <div className={cx('carousel-swapper')}>
                         <ul className={cx('carousel-list')}>
                             {/* component carousel item here */}
-                            {
-                                listItem.length &&
+                            {listItem.length &&
                                 listItem.map((item, index) => (
                                     <CarouselItemComponent key={index} item={item} data-index={index} />
-                                ))
-                            }
+                                ))}
                         </ul>
                     </div>
 
