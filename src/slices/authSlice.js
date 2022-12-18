@@ -1,4 +1,12 @@
 import { createSlice } from "@reduxjs/toolkit";
+import { useDispatch } from "react-redux";
+
+//slice
+import { getAll } from '~/slices/cartSlice';
+
+//service
+import * as cartService from '~/services/cartService';
+
 const initialState = {
     token: JSON.parse(localStorage.getItem('token')) || null,
     isLogged: JSON.parse(localStorage.getItem('isLogged')) || false,
@@ -14,7 +22,8 @@ const auth = createSlice({
             state.token = token;
             state.isLogged = true;
             state.userLogin = user;
-            // set local storage
+
+            // set local storage after login success
             localStorage.setItem('token', JSON.stringify(token));
             localStorage.setItem('isLogged', true);
             localStorage.setItem('user-login', JSON.stringify(user));
@@ -23,7 +32,7 @@ const auth = createSlice({
             state.token = null;
             state.isLogged = false;
             state.userLogin = {};
-            // remove local storage
+            // remove local storage 
             localStorage.removeItem('token')
             localStorage.removeItem('isLogged');
             localStorage.removeItem('user-login');

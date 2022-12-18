@@ -82,10 +82,10 @@ function SearchBox(props) {
     };
 
     const handleOnFocus = () => {
-        setShowHistory(true);
         if (!searchKey) {
             setData(JSON.parse(localStorage.getItem('search-history')) || []);
         }
+        setShowHistory(true);
     };
 
     const search = () => {

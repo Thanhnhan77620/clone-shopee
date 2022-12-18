@@ -1,16 +1,18 @@
+//react component
 import classNames from 'classnames/bind';
 import { Link } from 'react-router-dom';
 
-import styles from './HeaderSearchCart.module.scss';
+//custom component
 import SearchBox from '../../SearchBox/SearchBox';
 import { LogoIcon } from '~/components/Icons';
 import CartLayout from '~/layouts/components/Header/CartLayout';
-import { useSelector } from 'react-redux';
+
+//style
+import styles from './HeaderSearchCart.module.scss';
 
 const cx = classNames.bind(styles);
 
 function HeaderSearchCart() {
-    const { isLogged } = useSelector((state) => state.auth);
     return (
         <>
             {/*  Header with search */}
@@ -26,7 +28,7 @@ function HeaderSearchCart() {
                 <SearchBox />
 
                 {/*  Cart layout */}
-                <CartLayout logged={isLogged} countItemOrder={10} />
+                <CartLayout />
             </div>
         </>
     );

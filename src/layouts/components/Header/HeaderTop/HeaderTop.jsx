@@ -10,7 +10,10 @@ import images from '~/assets/images';
 import { QRCode } from '~/layouts/components/QR';
 import config from '~/config';
 import { CHECKBOX_FORM_LOGIN_ID, CHECKBOX_FORM_REGISTER_ID } from '~/commons';
+
+//slice
 import { logout } from '~/slices/authSlice';
+import { removeAll } from '~/slices/cartSlice';
 
 const cx = classNames.bind(styles);
 function HeaderTop() {
@@ -18,8 +21,7 @@ function HeaderTop() {
     const dispatch = useDispatch();
 
     const handleClickLogout = () => {
-        const action = logout();
-        dispatch(action);
+        Promise.all([dispatch(logout()), dispatch(removeAll())]);
     };
 
     return (

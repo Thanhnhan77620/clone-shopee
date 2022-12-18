@@ -9,6 +9,8 @@ import styles from './Carousel.module.scss';
 const cx = classnames.bind(styles);
 function Carousel({
     items = [],
+    currentIndexThumb = 0,
+    keyMap = '',
     defaultItems,
     imageTop = true,
     showArrowButton = true,
@@ -20,7 +22,7 @@ function Carousel({
     const listImage = useRef(null);
     const btnLeft = useRef(null);
     const btnRight = useRef(null);
-    const [currentIndex, setCurrentIndex] = useState(0);
+    const [currentIndex, setCurrentIndex] = useState(currentIndexThumb);
     const [showPopup, setShowPopup] = useState(() => {
         return !popup;
     });
@@ -76,8 +78,8 @@ function Carousel({
         >
             <div style={{ display: showPopup ? 'block' : 'none' }}>
                 {imageTop ? (
-                    checkURL(items[currentIndex].imageURL) ? (
-                        <img src={items[currentIndex].imageURL} alt="images" className={cx('left-image')} />
+                    checkURL(items[currentIndex][keyMap]) ? (
+                        <img src={items[currentIndex][keyMap]} alt="images" className={cx('left-image')} />
                     ) : (
                         <video
                             className={cx('left-image')}
@@ -87,12 +89,12 @@ function Carousel({
                             loop
                             muted
                             alt="All the devices"
-                            src={items[currentIndex].imageURL}
+                            src={items[currentIndex][keyMap]}
                             style={{ height }}
                         />
                     )
-                ) : checkURL(items[currentIndex].imageURL) ? (
-                    <img src={items[currentIndex].imageURL} alt="images" className={cx('left-image')} />
+                ) : checkURL(items[currentIndex][keyMap]) ? (
+                    <img src={items[currentIndex][keyMap]} alt="images" className={cx('left-image')} />
                 ) : (
                     <video
                         className={cx('left-image')}
@@ -102,7 +104,7 @@ function Carousel({
                         loop
                         muted
                         alt="All the devices"
-                        src={items[currentIndex].imageURL}
+                        src={items[currentIndex][keyMap]}
                         style={{ height }}
                     />
                 )}
@@ -110,10 +112,10 @@ function Carousel({
             <div className={cx('left-image-list-swapper')}>
                 <ul ref={listImage} className={cx('left-image-list')} style={{ transform: handleTransform() }}>
                     {items.map((item, index) =>
-                        checkURL(item.imageURL) ? (
+                        checkURL(item[keyMap]) ? (
                             <img
                                 key={index}
-                                src={item.imageURL}
+                                src={item[keyMap]}
                                 alt="images"
                                 className={cx(
                                     'left-image-list__item', // && popup
@@ -134,7 +136,7 @@ function Carousel({
                                     currentIndex === index && showPopup ? 'left-image-list__item--active' : null,
                                 )}
                                 alt="All the devices"
-                                src={item.imageURL}
+                                src={item[keyMap]}
                                 width={thumbWidth}
                                 height={thumbWidth}
                                 onClick={() => {

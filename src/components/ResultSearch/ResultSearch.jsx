@@ -11,18 +11,6 @@ import ProductItem from '../Product/ProductItem';
 const cx = classnames.bind(styles);
 function ResultSearch({ data = [] }) {
     console.log(data);
-
-    // data = [];
-    // for (let i = 0; i < 10; i++) {
-    //     data.push({
-    //         id: i,
-    //         name: 'Balo nam nữ giá rẻ, thời trang đi học nhiều ngăn siêu nhẹ phong cách ulzzang, đẹp đựng laptop ULZ015',
-    //         imageURL: 'https://cf.shopee.vn/file/9e40b129903c4f5e3a48ef12cc69796d_tn',
-    //         price: 200000,
-    //         sale: 20,
-    //         sold: '12k', //12k
-    //     });
-    // }
     return (
         <>
             {/* <!-- Home filter --> */}

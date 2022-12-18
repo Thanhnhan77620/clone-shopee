@@ -20,3 +20,25 @@ export const getProductById = async (id) => {
     const res = await httpRequest.get('products/' + id);
     return res;
 };
+
+export const like = async (id) => {
+    const configHeader = {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+        }
+    }
+    const res = await httpRequest.post(`products/${id}/like`, {}, configHeader);
+    return res;
+};
+
+export const unLike = async (id) => {
+    const configHeader = {
+        headers: {
+            'Content-Type': 'multipart/form-data',
+            'Authorization': `Bearer ${token}`
+        }
+    }
+    const res = await httpRequest.post(`products/${id}/unlike`, {}, configHeader);
+    return res;
+};

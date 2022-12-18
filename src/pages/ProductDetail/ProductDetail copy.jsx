@@ -13,7 +13,6 @@ import {
 } from '@fortawesome/free-solid-svg-icons';
 import { useState, useEffect, useRef } from 'react';
 import { useParams } from 'react-router-dom';
-import { useDispatch } from 'react-redux';
 
 //custom component
 import Breadcrumb from '~/components/Breadcrumb';
@@ -24,36 +23,21 @@ import RatingStar from '~/components/RatingStar';
 import video from '~/assets/videos/video.mp4';
 import CarouselCustom from '~/components/Carousel';
 import images from '~/assets/images';
-import { toastError, toastInfo, toastSuccess } from '~/assets/js/toast-message';
 
 //service
 import * as productService from '~/services/productService';
 import * as bannerService from '~/services/bannerService';
-import * as cartService from '~/services/cartService';
-
-//slice
-import { addItem, getAll } from '~/slices/cartSlice';
 
 //style
 import styles from './ProductDetail.module.scss';
 
 const cx = classnames.bind(styles);
 function ProductDetail(props) {
-    const dispatch = useDispatch();
     const { id } = useParams();
     const [productDetail, setProductDetail] = useState({});
-    const [currentModelSelect, setCurrentModelSelect] = useState('');
-    const [modelCart, setModelCart] = useState({});
-    const videoEl = useRef(null);
+    const [currentImage, setCurrentImage] = useState('');
 
-    const isParams = () => {
-        if (Object.keys(productDetail).length && Object.keys(productDetail.params).length) {
-            return true;
-        }
-        return false;
-    };
-
-    const listImage = 'https://play-ws.vod.shopee.com/c3/98934353/103/A3oxOAihAOwQjfgIER0FACc.mp4';
+    const listImage = 'https://cf.shopee.vn/file/3d6a3b229e348c5c78baddac823666ce';
     const data = [];
     for (let i = 0; i < 5; i++) {
         data.push({ id: i, label: 'Danh mụcdassssssssssssssads', content: 'Lenovo' });
@@ -80,40 +64,7 @@ function ProductDetail(props) {
         });
     }
 
-    const checkSelect = (key, value) => {
-        const model = modelCart.tierModel.find((a) => a.name === key);
-        if (model.currentModel.id === value) {
-            return 'active';
-        }
-        return '';
-    };
-
-    const handleSelectModel = (key, model) => {
-        // setModelCart(modelCart);
-        setModelCart((preState) => {
-            const indexTierModel = preState.tierModel.findIndex((item) => item.name === key);
-            const tierModel = preState.tierModel[indexTierModel];
-            tierModel.currentModel = { id: model.id, name: model.name };
-            preState.tierModel[indexTierModel] = tierModel;
-            return { ...modelCart, tierModel: preState.tierModel };
-        });
-    };
-
-    const likeProduct = async () => {
-        const req = await productService.like(id);
-    };
-
-    const handleAddCart = async () => {
-        const req = await cartService.create(modelCart);
-        if (req.status === 201) {
-            const req = await cartService.getAll();
-            if (req.status === 201) {
-                dispatch(getAll(req.data));
-            }
-        } else {
-            toastError('Add Item Into Cart Fail');
-        }
-    };
+    const videoEl = useRef(null);
 
     useEffect(() => {
         const attemptPlay = () => {
@@ -128,29 +79,14 @@ function ProductDetail(props) {
             const req = await productService.getProductById(id);
             if (req.status === 200) {
                 setProductDetail(req.data);
-                setCurrentModelSelect(req.data.image.path);
-
-                const { id, name, image, price, priceBeforeDiscount, tierModels, discount } = req.data;
-                const product = { id, name, imagePath: image.path, price, priceBeforeDiscount, discount, quantity: 1 };
-                var tierModel = [];
-                if (tierModels && tierModels.length) {
-                    tierModels.forEach((item, index) => {
-                        const { id, name, models } = item;
-                        tierModel.push({
-                            id,
-                            name,
-                            currentModel: { id: models[0].id, name: models[0].name },
-                        });
-                    });
-                }
-                setModelCart({ product, tierModel });
+                setCurrentImage(req.data.image.path);
             }
         };
 
         getProductById();
         attemptPlay();
         // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [id]);
+    }, []);
 
     return (
         <div className="app__container">
@@ -159,38 +95,60 @@ function ProductDetail(props) {
                 {/* Product info */}
                 <div className={cx('card-layout', 'product-info-swapper')}>
                     <div className={cx('product-info-left')}>
-                        {Object.keys(productDetail).length && (
-                            <CarouselCustom
-                                items={productDetail.images}
-                                keyMap="path"
-                                currentThumb={0}
-                                defaultItems={5}
-                            />
-                        )}
+                        {/* <img src={listImage} alt="images" className={cx('left-image')} /> */}
+                        {/* <video
+                            className={cx('left-image')}
+                            playsInline
+                            loop
+                            muted
+                            controls
+                            alt="All the devices"
+                            src={video}
+                            ref={videoEl}
+                        />
+                        <div className={cx('left-image-list-swapper')}>
+                            <ul className={cx('left-image-list')}>
+                                <video
+                                    className={cx('left-image-list__item', 'left-image-list__item--active')}
+                                    alt="All the devices"
+                                    src={video}
+                                />
+                                {items.map((item) => (
+                                    <img
+                                        key={item.id}
+                                        src={item.imageURL}
+                                        alt="images"
+                                        className={cx('left-image-list__item')}
+                                    />
+                                ))}
+                            </ul>
+
+                            <div className={cx('arrow-btn', 'arrow-btn__left')}>
+                                <FontAwesomeIcon icon={faAngleLeft} />
+                            </div>
+                            <div className={cx('arrow-btn', 'arrow-btn__right')}>
+                                <FontAwesomeIcon icon={faAngleRight} />
+                            </div>
+                        </div> */}
+                        <CarouselCustom items={items} defaultItems={5} />
+
                         {/* Like icon */}
-                        <div className={cx('left-like')} onClick={likeProduct}>
+                        <div className={cx('left-like')}>
                             <div className={cx('left-like__icon')}>
                                 <FontAwesomeIcon icon={faHeart} className={cx('fill')} />
                             </div>
                             <div className={cx('left-like__text')}>Đã thích {productDetail.likedCount}</div>
                         </div>
                     </div>
-
                     <div className={cx('product-info-right')}>
                         <div className={cx('title')}>{productDetail.name}</div>
                         <div className={cx('group-rating-vote')}>
                             <div className={cx('rating')}>
-                                {isParams() && (
-                                    <div className={cx('rating__score')}> {productDetail.params.ratingAvg} </div>
-                                )}
-
-                                <RatingStar score={isParams() ? productDetail.params.ratingAvg : 0} colorFill="red" />
+                                <div className={cx('rating__score')}>3.6</div>
+                                <RatingStar score={3.6} colorFill="red" />{' '}
                             </div>
                             <div className={cx('vote', 'separate')}>
-                                <span className={cx('quantity')}>
-                                    {' '}
-                                    {isParams() ? productDetail.params.reviewTotal : 0}
-                                </span>
+                                <span className={cx('quantity')}>1.4K</span>
                                 <span className={cx('text')}> Đánh giá</span>
                             </div>
                             <div className={cx('vote', 'separate')}>
@@ -218,19 +176,15 @@ function ProductDetail(props) {
                                 <div key={index} className={cx('group-color-swapper')}>
                                     <label className={cx('group-color-label')}>{item.name}</label>
                                     <div className={cx('group-color-list')}>
+                                        <Button normal border className={cx('group-color-list__item', 'active')}>
+                                            Bạc (N3 Ver 1)
+                                        </Button>
+
                                         {item.models.map((model, index) => (
-                                            <Button
-                                                key={index}
-                                                normal
-                                                border
-                                                className={cx(
-                                                    'group-color-list__item',
-                                                    checkSelect(item.name, model.id),
-                                                )}
-                                                onClick={() => handleSelectModel(item.name, model)}
-                                            >
+                                            <Button normal border className={cx('group-color-list__item')}>
                                                 {model.name}
-                                                {checkSelect(item.name, model.id) && (
+
+                                                {true && (
                                                     <div className={cx('group-color-list__item--tick')}>
                                                         <FontAwesomeIcon
                                                             icon={faCheck}
@@ -247,43 +201,12 @@ function ProductDetail(props) {
                         <div className={cx('group-quantity-swapper')}>
                             <div className={cx('group-quantity-label')}>Số Lượng</div>
                             <div className={cx('group-quantity-select')}>
-                                <button
-                                    className={cx('group-quantity-select__btn', 'group-quantity-select__btn-left')}
-                                    onClick={() => {
-                                        if (modelCart.product.quantity > 1) {
-                                            setModelCart((prevState) => {
-                                                prevState.product.quantity = prevState.product.quantity - 1;
-                                                return { ...modelCart, product: prevState.product };
-                                            });
-                                        }
-                                    }}
-                                >
+                                <button className={cx('group-quantity-select__btn', 'group-quantity-select__btn-left')}>
                                     <FontAwesomeIcon icon={faSubtract} />
                                 </button>
-                                <input
-                                    type="number"
-                                    pattern="[0-9]"
-                                    className={cx('group-quantity-select__input')}
-                                    value={Object.keys(modelCart).length ? modelCart.product.quantity : 1}
-                                    onChange={(e) => {
-                                        if (+e.target.value) {
-                                            setModelCart((prevState) => {
-                                                prevState.product.quantity = +e.target.value;
-                                                return { ...modelCart, product: prevState.product };
-                                            });
-                                        }
-                                    }}
-                                />
+                                <input type="text" className={cx('group-quantity-select__input')} defaultValue={1} />
                                 <button
                                     className={cx('group-quantity-select__btn', 'group-quantity-select__btn-right')}
-                                    onClick={(e) => {
-                                        if (modelCart.product.quantity < 100) {
-                                            setModelCart((prevState) => {
-                                                prevState.product.quantity = prevState.product.quantity + 1;
-                                                return { ...modelCart, product: prevState.product };
-                                            });
-                                        }
-                                    }}
                                 >
                                     <FontAwesomeIcon icon={faPlus} />
                                 </button>
@@ -302,7 +225,6 @@ function ProductDetail(props) {
                                 large
                                 leftIcon={<FontAwesomeIcon icon={faCartPlus} className={cx('group-btn__icon')} />}
                                 className={cx('group-btn')}
-                                onClick={handleAddCart}
                             >
                                 <span>thêm vào giỏ hàng</span>
                             </Button>

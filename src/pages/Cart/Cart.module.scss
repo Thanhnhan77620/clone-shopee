@@ -296,7 +296,13 @@
                 .item-total {
                     color: var(--primary-color);
                 }
-                .item-action {
+                .item-action-group {
+                    .item-action-group_action {
+                        cursor: pointer;
+                        &:hover{
+                            color:var(--primary-color)
+                        }
+                    }
                 }
             }
         }

@@ -1,31 +1,55 @@
+//react component
 import { faCheck, faPlus, faSubtract } from '@fortawesome/free-solid-svg-icons';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import classnames from 'classnames/bind';
 import HeadlessTippy from '@tippyjs/react/headless';
+import { Fragment, useState } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
 
+//custom component
 import images from '~/assets/images';
 import Button from '~/components/Button';
-import style from './Cart.module.scss';
-import { Fragment, useState } from 'react';
 
+//service
+import * as cartService from '~/services/cartService';
+
+//slice
+import { getAll, remove } from '~/slices/cartSlice';
+
+//style
+import style from './Cart.module.scss';
+import { toastError, toastSuccess } from '~/assets/js/toast-message';
 const cx = classnames.bind(style);
 
 function Cart() {
+    const dispatch = useDispatch();
+    const { carts } = useSelector((state) => state.cart);
     const [toggleIndex, setToggleIndex] = useState(-1);
 
     const widths = ['5%', '40%', '20%', '15%', '10%', '10%'];
 
+    const handleDeleteCart = async (item) => {
+        const { id, tierModel } = item.product;
+        const product = { id, tierModels: [] };
+        tierModel.forEach((element) => {
+            product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
+        });
+        const body = { products: [{ ...product }] };
+        const req = await cartService.remove(body);
+        if (req.status === 201) {
+            toastSuccess('Delete Item From Cart Successfully!');
+            const req = await cartService.getAll();
+            if (req.status === 201) {
+                console.log(req.data);
+                dispatch(getAll(req.data));
+            }
+        } else {
+            toastError('Delete Item From Cart Fail!');
+        }
+    };
     return (
         <div className={cx('cart-container')}>
-            {false ? (
-                <div className={cx('cart-empty-swap')}>
-                    <img src={images.noCart} alt="images" className={cx('cart-empty_img')} />
-                    <strong className={cx('cart-empty_text')}>Giỏ hàng của bạn còn trống</strong>
-                    <Button primary to="/" className={cx('cart-empty_btn')}>
-                        MUA NGAY
-                    </Button>
-                </div>
-            ) : (
+            {carts.length ? (
                 <div className={cx('cart-swap')}>
                     <div className={cx('card-swap', 'cart-swap-header')}>
                         <div className={cx('cart-swap-header_item')} style={{ width: widths[0] }}>
@@ -54,7 +78,7 @@ function Cart() {
 
                     <div className={cx('cart-swap-main')}>
                         <div className={cx('card-swap')}>
-                            {widths.map((item, index) => (
+                            {carts.map((item, index) => (
                                 <Fragment key={index}>
                                     <div className={cx('cart-main-item')}>
                                         <div className={cx('item-checkbox')} style={{ width: widths[0] }}>
@@ -66,15 +90,12 @@ function Cart() {
                                             style={{ color: 'var(--text-color)', width: widths[1], textAlign: 'left' }}
                                         >
                                             <img
-                                                src={images.sample}
+                                                src={item.product.imagePath}
                                                 alt="images"
                                                 className={cx('item-info-group_img')}
                                             />
 
-                                            <div className={cx('item-info-group_name')}>
-                                                Nắp mica che bụi bàn phím, cover key board, tấm mica bảo vệ cover key
-                                                board, tấm mica bảo vệ, cover key board, tấm mica bảo vệ
-                                            </div>
+                                            <div className={cx('item-info-group_name')}>{item.product.name}</div>
 
                                             <div
                                                 className={cx('item-info-group_type')}
@@ -186,8 +207,10 @@ function Cart() {
                                         </div>
 
                                         <div className={cx('item-price')} style={{ width: widths[2] }}>
-                                            <span className={cx('item-price_old')}>₫100.700.500</span>
-                                            <span className={cx('item-price_new')}>₫100.100.500</span>
+                                            <span className={cx('item-price_old')}>
+                                                {item.product.priceBeforeDiscount}
+                                            </span>
+                                            <span className={cx('item-price_new')}>{item.product.price}</span>
                                         </div>
 
                                         <div className={cx('group-quantity-swapper')} style={{ width: widths[3] }}>
@@ -210,6 +233,7 @@ function Cart() {
                                                         'group-quantity-select__btn',
                                                         'group-quantity-select__btn-right',
                                                     )}
+                                                    // onClick={()=>handleUpdateQuantity(item.product.quantity)}
                                                 >
                                                     <FontAwesomeIcon icon={faPlus} />
                                                 </button>
@@ -217,10 +241,15 @@ function Cart() {
                                         </div>
 
                                         <div className={cx('item-total')} style={{ width: widths[4] }}>
-                                            ₫100.700.500
+                                            ₫{item.product.price * item.product.quantity}
                                         </div>
                                         <div className={cx('item-action-group')} style={{ width: widths[5] }}>
-                                            <div className={cx('item-action-group_action')}>Xóa</div>
+                                            <div
+                                                className={cx('item-action-group_action')}
+                                                onClick={() => handleDeleteCart(item)}
+                                            >
+                                                Xóa
+                                            </div>
                                         </div>
                                     </div>
 
@@ -231,6 +260,14 @@ function Cart() {
                     </div>
 
                     <div className={cx('card-swap cart-swap-footer')}></div>
+                </div>
+            ) : (
+                <div className={cx('cart-empty-swap')}>
+                    <img src={images.noCart} alt="images" className={cx('cart-empty_img')} />
+                    <strong className={cx('cart-empty_text')}>Giỏ hàng của bạn còn trống</strong>
+                    <Button primary to="/" className={cx('cart-empty_btn')}>
+                        MUA NGAY
+                    </Button>
                 </div>
             )}
         </div>

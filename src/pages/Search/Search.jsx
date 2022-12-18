@@ -14,7 +14,6 @@ function Search() {
     let params = { page: 1, limit: 5 };
     const url = new URL(window.location.href);
     const keyword = new URLSearchParams(url.search).getAll('keyword');
-
     const [products, setProducts] = useState([]);
 
     useEffect(() => {

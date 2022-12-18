@@ -23,7 +23,6 @@ export const post = async (path, option = {}, config = {}) => {
         const { data, status } = response;
         return { data, status };
     } catch (error) {
-        console.log(error);
         const { errors, statusCode } = error.response.data
         return { errors, status: statusCode };
     }

@@ -9,7 +9,7 @@ import styles from './FilterComment.module.scss';
 import { useRef } from 'react';
 import { createRef } from 'react';
 import { useEffect } from 'react';
-import Carousel from '../Carousel';
+import CarouselCustom from '../Carousel';
 import Slider from '../Slider';
 import styleTopSearchItem from '../TopSearch/TopSearchItem/TopSearchItem.module.scss';
 import { TopSearchItem } from '../TopSearch';
@@ -177,13 +177,13 @@ function FilterComment() {
                                                 <div className={cx('rating-media-list__zoom-image')}>
                                                     {/* <Carousel/> */}
                                                     {/* <Banner type="carousel" data={data} height={400} autoPlay={false}/> */}
-                                                    <Carousel
+                                                    {/* <CarouselCustom
                                                         items={items}
                                                         defaultItems={5}
                                                         imageTop={false}
                                                         popup={true}
                                                         height="100%"
-                                                    />
+                                                    /> */}
                                                 </div>
                                             </div>
                                         </div>
