@@ -188,7 +188,6 @@ function ProductDetail(props) {
                             </div>
                             <div className={cx('vote', 'separate')}>
                                 <span className={cx('quantity')}>
-                                    {' '}
                                     {isParams() ? productDetail.params.reviewTotal : 0}
                                 </span>
                                 <span className={cx('text')}> Đánh giá</span>

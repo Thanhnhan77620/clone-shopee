@@ -19,32 +19,65 @@ import { getAll, remove } from '~/slices/cartSlice';
 
 //style
 import style from './Cart.module.scss';
-import { toastError, toastSuccess } from '~/assets/js/toast-message';
+import { toastError, toastSuccess, toastWarning } from '~/assets/js/toast-message';
+import { useEffect } from 'react';
 
 const cx = classnames.bind(style);
 
 function Cart() {
     const dispatch = useDispatch();
     const { carts } = useSelector((state) => state.cart);
+    // const [items, setItems] = useState(carts);
+    const [cartSelected, setCartSelected] = useState([]);
     const [toggleIndex, setToggleIndex] = useState(-1);
+    const [checkAll, setCheckAll] = useState(false);
 
-    const widths = ['5%', '40%', '20%', '15%', '10%', '10%'];
+    const widths = ['5%', '45%', '10%', '20%', '10%', '10%'];
 
-    const handleDeleteCart = async (item) => {
-        const { id, tierModel } = item.product;
-        const product = { id, tierModels: [] };
-        tierModel.forEach((element) => {
-            product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
-        });
-        const body = { products: [{ ...product }] };
+    const handleDeleteCart = async (type = 'all', item = {}) => {
+        let body = {};
+        const products = [];
+        if (type === 'all') {
+            if (cartSelected.length) {
+                carts.forEach((item) => {
+                    if (cartSelected.findIndex((a) => a === item.id) > -1) {
+                        const { id, tierModel } = item.product;
+                        const product = { productId: id, tierModels: [] };
+                        tierModel.forEach((element) => {
+                            product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
+                        });
+                        products.push(product);
+                    }
+                });
+                if (products.length) {
+                    body = { products };
+                }
+            } else {
+                toastWarning('Select Item!');
+            }
+        } else {
+            if (Object.keys(item).length) {
+                const { id, tierModel } = item.product;
+                const product = { productId: id, tierModels: [] };
+                tierModel.forEach((element) => {
+                    product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
+                });
+                products.push(product);
+                if (products.length) {
+                    body = { products };
+                }
+            }
+        }
+
         const req = await cartService.remove(body);
         if (req.status === 201) {
-            toastSuccess('Delete Item From Cart Successfully!');
-            const req = await cartService.getAll();
-            if (req.status === 201) {
-                console.log(req.data);
-                dispatch(getAll(req.data));
+            if (type === 'all') {
+                setCartSelected([]);
+            } else {
+                setCartSelected([...cartSelected.filter((a) => a !== item.id)]);
             }
+
+            dispatchActinGetAll();
         } else {
             toastError('Delete Item From Cart Fail!');
         }
@@ -57,18 +90,91 @@ function Cart() {
             search: '?state=nhan',
         });
 
+    const productClassification = (cart) => {
+        const arr = [];
+        const { tierModel, discount } = cart.product;
+        arr.push(`${discount}%`);
+        tierModel.forEach((item) => arr.push(item.currentModel.name));
+        return arr.join(', ');
+    };
+
+    const handleOnchangeQuantity = async (newQuantity, item) => {
+        if (newQuantity) {
+            const { id, tierModel } = item.product;
+            const body = { productId: id, quantity: newQuantity, tierModels: [] };
+            tierModel.forEach((item) => {
+                body.tierModels.push({ id: item.id, modelId: item.currentModel.id });
+            });
+            const req = await cartService.updateQuantity(body);
+            if (req.status === 201) {
+                dispatchActinGetAll();
+            } else {
+                toastError('Update Quantity Fail!');
+            }
+        }
+    };
+
+    const dispatchActinGetAll = async () => {
+        const req = await cartService.getAll();
+        if (req.status === 201) {
+            dispatch(getAll(req.data));
+        }
+    };
+
+    const handleSelectItem = (e, key) => {
+        if (e.target.checked) {
+            setCartSelected([...cartSelected, key]);
+        } else {
+            setCartSelected([...cartSelected.filter((a) => a !== key)]);
+        }
+    };
+
+    const handleSelectAll = (e) => {
+        setCheckAll(!checkAll);
+        if (e.target.checked) {
+            const newArr = [];
+            carts.forEach((item) => newArr.push(item.id));
+            setCartSelected(newArr);
+        } else {
+            setCartSelected([]);
+        }
+    };
+
+    const sum = () => {
+        return carts.reduce(function (acc, cur) {
+            if (cartSelected.findIndex((a) => a === cur.id) > -1) {
+                return acc + cur.product.price * cur.product.quantity;
+            }
+            return acc;
+        }, 0);
+    };
+
+    console.log(cartSelected);
+
     return (
         <div className={cx('cart-container')}>
             {carts.length ? (
                 <div className={cx('cart-swap')}>
                     <div className={cx('card-swap', 'cart-swap-header')}>
                         <div className={cx('cart-swap-header_item')} style={{ width: widths[0] }}>
-                            <input id="check-item" type="checkbox" className={cx('cart-swap-header_item-checkbox')} />
+                            <input
+                                id="check-item"
+                                type="checkbox"
+                                className={cx('cart-swap-header_item-checkbox')}
+                                checked={cartSelected.length === carts.length}
+                                onClick={handleSelectAll}
+                                onChange={() => {}}
+                            />
                             <label htmlFor="check-item"></label>
                         </div>
                         <div
                             className={cx('cart-swap-header_item')}
-                            style={{ color: 'var(--text-color)', width: widths[1], textAlign: 'left' }}
+                            style={{
+                                color: 'var(--text-color)',
+                                width: widths[1],
+                                textAlign: 'left',
+                                fontSize: '16px',
+                            }}
                         >
                             Sản Phẩm
                         </div>
@@ -92,7 +198,13 @@ function Cart() {
                                 <Fragment key={index}>
                                     <div className={cx('cart-main-item')}>
                                         <div className={cx('item-checkbox')} style={{ width: widths[0] }}>
-                                            <input type="checkbox" className={cx('item-checkbox-input')} />
+                                            <input
+                                                type="checkbox"
+                                                className={cx('item-checkbox-input')}
+                                                checked={cartSelected.findIndex((a) => a === item.id) > -1}
+                                                onClick={(e) => handleSelectItem(e, item.id)}
+                                                onChange={() => {}}
+                                            />
                                         </div>
 
                                         <div
@@ -203,13 +315,13 @@ function Cart() {
                                                         </div>
                                                     )}
                                                 >
-                                                    <div>
+                                                    <div style={{ float: 'right' }}>
                                                         <div className={cx('item-info-group_type-title')}>
                                                             <span>Phân loại hàng:</span>
                                                             <button className={cx('item-info-group_type-btn')}></button>
                                                         </div>
                                                         <div className={cx('item-info-group_type-content')}>
-                                                            85%, đen
+                                                            {productClassification(item)}
                                                         </div>
                                                     </div>
                                                 </HeadlessTippy>
@@ -230,20 +342,31 @@ function Cart() {
                                                         'group-quantity-select__btn',
                                                         'group-quantity-select__btn-left',
                                                     )}
+                                                    onClick={() => {
+                                                        const newQuantity = item.product.quantity - 1;
+                                                        if (newQuantity) {
+                                                            handleOnchangeQuantity(newQuantity, item);
+                                                        }
+                                                    }}
                                                 >
                                                     <FontAwesomeIcon icon={faSubtract} />
                                                 </button>
                                                 <input
-                                                    type="text"
+                                                    type="number"
+                                                    pattern="[0-9]"
                                                     className={cx('group-quantity-select__input')}
-                                                    defaultValue={index + 1}
+                                                    value={item.product.quantity}
+                                                    onChange={(e) => handleOnchangeQuantity(+e.target.value, item)}
                                                 />
                                                 <button
                                                     className={cx(
                                                         'group-quantity-select__btn',
                                                         'group-quantity-select__btn-right',
                                                     )}
-                                                // onClick={()=>handleUpdateQuantity(item.product.quantity)}
+                                                    onClick={() => {
+                                                        const newQuantity = item.product.quantity + 1;
+                                                        handleOnchangeQuantity(newQuantity, item);
+                                                    }}
                                                 >
                                                     <FontAwesomeIcon icon={faPlus} />
                                                 </button>
@@ -256,7 +379,7 @@ function Cart() {
                                         <div className={cx('item-action-group')} style={{ width: widths[5] }}>
                                             <div
                                                 className={cx('item-action-group_action')}
-                                                onClick={() => handleDeleteCart(item)}
+                                                onClick={() => handleDeleteCart('one', item)}
                                             >
                                                 Xóa
                                             </div>
@@ -271,7 +394,14 @@ function Cart() {
 
                     <div className={cx('card-swap', 'cart-swap-footer')}>
                         <div className={cx('cart-swap-footer_item')} style={{ width: '5%' }}>
-                            <input id="check-item" type="checkbox" className={cx('cart-swap-footer_item-checkbox')} />
+                            <input
+                                id="check-item"
+                                type="checkbox"
+                                className={cx('cart-swap-footer_item-checkbox')}
+                                checked={cartSelected.length === carts.length}
+                                onClick={handleSelectAll}
+                                onChange={() => {}}
+                            />
                             <label htmlFor="check-item"></label>
                         </div>
                         <div
@@ -280,15 +410,21 @@ function Cart() {
                         >
                             Chọn Tất Cả ({carts.length})
                         </div>
-                        <div className={cx('cart-swap-footer_item', 'cart-swap-footer_item--active')}>Xóa</div>
-                        <div className={cx('cart-swap-footer_item')} style={{ width: '25%' }}>
+                        <div
+                            className={cx('cart-swap-footer_item', 'cart-swap-footer_item--active')}
+                            onClick={() => handleDeleteCart('all')}
+                        >
+                            Xóa
                         </div>
+                        <div className={cx('cart-swap-footer_item')} style={{ width: '25%' }}></div>
                         <div className={cx('cart-swap-footer_item')} style={{ width: '35%', textAlign: 'right' }}>
-                            Tổng thanh toán ({0} Sản phẩm):
-                            <span style={{ color: 'red', marginLeft: 8, fontSize: '20px' }}>₫1.000.000.000</span>
+                            Tổng thanh toán ({cartSelected.length} Sản phẩm):
+                            <span className={cx('cart-swap-footer_item-price')}>₫{sum()}</span>
                         </div>
                         <div className={cx('cart-swap-footer_item')} style={{ width: '20%', textAlign: 'right' }}>
-                            <Button primary large style={{ width: '200px' }} onClick={goToCheckout}>Thanh Toán</Button>
+                            <Button primary large style={{ height: '40px', width: '200px' }} onClick={goToCheckout}>
+                                Thanh Toán
+                            </Button>
                         </div>
                     </div>
                 </div>

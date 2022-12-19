@@ -100,9 +100,10 @@
                         display: -webkit-box;
                         -webkit-box-orient: vertical;
                         -webkit-line-clamp: 2;
+                        flex: 1;
                     }
                     .item-info-group_type {
-                        width: 360px;
+                        width: 140px;
                         &:hover {
                             cursor: pointer;
                         }
@@ -119,6 +120,7 @@
                                 border-bottom: 0;
                                 background: none;
                                 padding: 0;
+                                margin-left: 5px;
                                 transition: transform 0.1s cubic-bezier(0.4, 0, 0.6, 1);
                                 transform: rotate(0);
                             }
@@ -318,6 +320,12 @@
                 &:hover.cart-swap-footer_item--active {
                     cursor: pointer;
                     color: var(--primary-color);
+                }
+
+                .cart-swap-footer_item-price {
+                    color: var(--primary-color);
+                    margin-left: 8px;
+                    font-size: 2rem;
                 }
 
                 .cart-swap-footer_item-checkbox {
