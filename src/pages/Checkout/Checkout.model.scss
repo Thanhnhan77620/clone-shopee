@@ -1,0 +1,79 @@
+//have item
+.card-swap {
+    font-size: 14px;
+    background: #fff;
+    color: var(--text-light-color);
+    padding: 20px;
+    margin: 0 12px;
+    box-shadow: 0 1px 1px 0 rgb(0 0 0 / 5%);
+    border-radius: 4px;
+}
+
+.container {
+    padding: 10px 0;
+    .card-address-swap {
+        .card-address-swap_header {
+            display: flex;
+            align-items: center;
+            color: var(--primary-color);
+            font-size: 1.8rem;
+
+            .header-logo {
+            }
+            .header-title {
+                margin-left: 10px;
+            }
+        }
+        .card-address-swap_content {
+            display: flex;
+            align-items: center;
+            font-size: 1.6rem;
+            line-height: 2rem;
+            padding-top: 15px;
+
+            .content-info {
+                display: flex;
+                flex-direction: column;
+                width: 200px;
+                color: var(--black-color);
+                font-weight: bold;
+            }
+
+            .content-location {
+                display: flex;
+                align-items: center;
+                justify-content: space-between;
+                flex: 1;
+                color: var(--text-color);
+
+                .content-location_detail {
+                }
+                .content-location_default {
+                    flex-shrink: 0;
+                    height: 25px;
+                    font-size: 1.4rem;
+                    line-height: 1.4rem;
+                    padding: 5px 5px;
+                    color: var(--primary-color);
+                    background-color: #fff;
+                    border: 1px solid var(--primary-color);
+                }
+            }
+
+            .content-action {
+                width: 100px;
+                &:hover {
+                    cursor: pointer;
+                    color: var(--primary-color);
+                }
+                span {
+                    float: right;
+                }
+            }
+        }
+    }
+
+    .card-main-swap {
+        margin: 10px;
+    }
+}

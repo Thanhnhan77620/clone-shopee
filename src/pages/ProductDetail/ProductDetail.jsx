@@ -89,7 +89,6 @@ function ProductDetail(props) {
     };
 
     const handleSelectModel = (key, model) => {
-        // setModelCart(modelCart);
         setModelCart((preState) => {
             const indexTierModel = preState.tierModel.findIndex((item) => item.name === key);
             const tierModel = preState.tierModel[indexTierModel];
@@ -106,12 +105,13 @@ function ProductDetail(props) {
     const handleAddCart = async () => {
         const req = await cartService.create(modelCart);
         if (req.status === 201) {
+            toastSuccess('Add Item Into Cart Successfully!');
             const req = await cartService.getAll();
             if (req.status === 201) {
                 dispatch(getAll(req.data));
             }
         } else {
-            toastError('Add Item Into Cart Fail');
+            toastError('Add Item Into Cart Fail!');
         }
     };
 

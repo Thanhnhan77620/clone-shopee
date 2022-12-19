@@ -8,6 +8,7 @@ import SearchBox from '../../SearchBox/SearchBox';
 const cx = classNames.bind(styles);
 
 function HeaderSearch(props) {
+    const getTitle = window.location.pathname.includes('cart') ? 'Giỏ Hàng' : 'Thanh Toán'
     return (
         <>
             {/*  Header with search */}
@@ -17,7 +18,7 @@ function HeaderSearch(props) {
                     <div className={cx('header__logo')}>
                         <LogoIcon className={cx('header__logo-img')} color="#f45d2d" />
                     </div>
-                    <div className={cx('header__logo-name')}>Giỏ Hàng</div>
+                    <div className={cx('header__logo-name')}>{getTitle}</div>
                 </Link>
                 <SearchBox />
             </div>

@@ -5,6 +5,7 @@ import classnames from 'classnames/bind';
 import HeadlessTippy from '@tippyjs/react/headless';
 import { Fragment, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
+import { useNavigate } from 'react-router-dom';
 
 //custom component
 import images from '~/assets/images';
@@ -19,6 +20,7 @@ import { getAll, remove } from '~/slices/cartSlice';
 //style
 import style from './Cart.module.scss';
 import { toastError, toastSuccess } from '~/assets/js/toast-message';
+
 const cx = classnames.bind(style);
 
 function Cart() {
@@ -47,6 +49,14 @@ function Cart() {
             toastError('Delete Item From Cart Fail!');
         }
     };
+
+    const navigate = useNavigate();
+    const goToCheckout = () =>
+        navigate({
+            pathname: '/checkout',
+            search: '?state=nhan',
+        });
+
     return (
         <div className={cx('cart-container')}>
             {carts.length ? (
@@ -233,7 +243,7 @@ function Cart() {
                                                         'group-quantity-select__btn',
                                                         'group-quantity-select__btn-right',
                                                     )}
-                                                    // onClick={()=>handleUpdateQuantity(item.product.quantity)}
+                                                // onClick={()=>handleUpdateQuantity(item.product.quantity)}
                                                 >
                                                     <FontAwesomeIcon icon={faPlus} />
                                                 </button>
@@ -259,7 +269,28 @@ function Cart() {
                         </div>
                     </div>
 
-                    <div className={cx('card-swap cart-swap-footer')}></div>
+                    <div className={cx('card-swap', 'cart-swap-footer')}>
+                        <div className={cx('cart-swap-footer_item')} style={{ width: '5%' }}>
+                            <input id="check-item" type="checkbox" className={cx('cart-swap-footer_item-checkbox')} />
+                            <label htmlFor="check-item"></label>
+                        </div>
+                        <div
+                            className={cx('cart-swap-footer_item')}
+                            style={{ color: 'var(--text-color)', width: '15%', textAlign: 'left' }}
+                        >
+                            Chọn Tất Cả ({carts.length})
+                        </div>
+                        <div className={cx('cart-swap-footer_item', 'cart-swap-footer_item--active')}>Xóa</div>
+                        <div className={cx('cart-swap-footer_item')} style={{ width: '25%' }}>
+                        </div>
+                        <div className={cx('cart-swap-footer_item')} style={{ width: '35%', textAlign: 'right' }}>
+                            Tổng thanh toán ({0} Sản phẩm):
+                            <span style={{ color: 'red', marginLeft: 8, fontSize: '20px' }}>₫1.000.000.000</span>
+                        </div>
+                        <div className={cx('cart-swap-footer_item')} style={{ width: '20%', textAlign: 'right' }}>
+                            <Button primary large style={{ width: '200px' }} onClick={goToCheckout}>Thanh Toán</Button>
+                        </div>
+                    </div>
                 </div>
             ) : (
                 <div className={cx('cart-empty-swap')}>

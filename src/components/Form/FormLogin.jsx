@@ -43,7 +43,6 @@ function FormLogin() {
                 handleShowPopupOverplay(null, true);
 
                 Promise.resolve(cartService.getAll()).then((e) => {
-                    console.log(e);
                     if (e.status === 201) {
                         dispatch(getAll(e.data));
                     } else {
