@@ -94,13 +94,13 @@ function Home() {
         //get category
         const getCate = async () => {
             let data = [];
-            const item = {
-                name: 'máy tính & laptop máy tính & laptop máy tính & laptop máy tính & laptop',
-                imageURL: 'https://cf.shopee.vn/file/978b9e4cb61c611aaaf58664fae133c5_tn',
-            };
-            for (let i = 1; i <= 17; i++) {
-                data.push({ id: i, name: item.name, imageURL: item.imageURL });
-            }
+            // const item = {
+            //     name: 'máy tính & laptop máy tính & laptop máy tính & laptop máy tính & laptop',
+            //     imageURL: 'https://cf.shopee.vn/file/978b9e4cb61c611aaaf58664fae133c5_tn',
+            // };
+            // for (let i = 1; i <= 17; i++) {
+            //     data.push({ id: i, name: item.name, imageURL: item.imageURL });
+            // }
             const repCate = await categoryService.getAll();
             if (repCate.status === 200) {
                 repCate.data.data.forEach((cate) => {
@@ -108,7 +108,7 @@ function Home() {
                 });
             }
 
-            setCategories(repCate);
+            setCategories(data);
         };
         getCate();
         getBanner();
@@ -125,7 +125,7 @@ function Home() {
             <div className={cx('container-body')}>
                 <div className="grid">
                     <Category data={categories} />
-                    <Banner type="horizontal" data={listHorizontal} />
+                    {/* <Banner type="horizontal" data={listHorizontal} />
                     <Brand listBanner={listHorizontal} />
                     <div className={cx('section-suggest')}>
                         <div className={cx('section-suggest-header')}>
@@ -135,13 +135,13 @@ function Home() {
                             <div className="grid__row">
                                 {data.map((item) => (
                                     <div key={item.id} className="grid__column-2">
-                                        {/* <ProductItem item={item} /> */}
+                                        <ProductItem item={item} />
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </div>
-                    <TopSearch data={data} />
+                    <TopSearch data={data} /> */}
                 </div>
             </div>
         </>
