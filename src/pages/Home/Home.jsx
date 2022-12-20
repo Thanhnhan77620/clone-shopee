@@ -94,20 +94,12 @@ function Home() {
         //get category
         const getCate = async () => {
             let data = [];
-            // const item = {
-            //     name: 'máy tính & laptop máy tính & laptop máy tính & laptop máy tính & laptop',
-            //     imageURL: 'https://cf.shopee.vn/file/978b9e4cb61c611aaaf58664fae133c5_tn',
-            // };
-            // for (let i = 1; i <= 17; i++) {
-            //     data.push({ id: i, name: item.name, imageURL: item.imageURL });
-            // }
             const repCate = await categoryService.getAll();
             if (repCate.status === 200) {
                 repCate.data.data.forEach((cate) => {
                     data.push({ id: cate.id, name: cate.name, imageURL: cate.logo.path });
                 });
             }
-
             setCategories(data);
         };
         getCate();

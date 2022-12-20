@@ -28,6 +28,7 @@ function Search() {
         productSearching();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
+    console.log(products);
 
     return (
         <div className="app__container">

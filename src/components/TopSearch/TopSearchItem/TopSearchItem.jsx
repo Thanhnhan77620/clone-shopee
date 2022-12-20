@@ -8,10 +8,10 @@ function TopSearchItem({ item }) {
     return (
         <li className={cx('carousel__item')}>
             <div className={cx('carousel__item-group')}>
-                <Link to='/' className={cx('carousel__item-grid')}>
+                <Link to="/" className={cx('carousel__item-grid')}>
                     <div className={cx('carousel__item-grid__content')}>
                         <div className={cx('carousel__item-grid__top')}>
-                            <span>{item.id}</span>
+                            <span>Top</span>
                         </div>
                         <div className={cx('carousel__item-grid__img')}>
                             <img src={item.imageURL} alt="images" />
