@@ -14,28 +14,30 @@ import { useDebounce } from '~/hooks';
 import * as searchServices from '~/services/searchService';
 import * as productService from '~/services/productService';
 
+//slice
+import { searching } from '~/slices/productSlice';
+
 //style
 import styles from './SearchBox.module.scss';
+import { useDispatch } from 'react-redux';
 
 const cx = classnames.bind(styles);
 
 function SearchBox(props) {
+    let params = { page: 1, limit: 5 };
+
+    const queryParameters = new URLSearchParams(window.location.search);
+    const keyword = queryParameters.get('keyword');
+    console.log(keyword);
+
     const navigate = useNavigate();
-
     const searchHistoryRef = useRef();
-    const inputSearch = useRef();
-
-    const [searchKey, setSearchKey] = useState('');
+    const [searchKey, setSearchKey] = useState(keyword ?? '');
     const [loading, setLoading] = useState(false);
     const [showHistory, setShowHistory] = useState(false);
-    // const [searchResult, setSearchResult] = useState([]);
     const [data, setData] = useState(() => JSON.parse(localStorage.getItem('search-history')) || []);
-
     const debouncedValue = useDebounce(searchKey, 500);
-
-    // const handleClickItemSearch = () => {
-    //     searchHistoryRef.current.style.display = 'none';
-    // };
+    const dispatch = useDispatch();
 
     const handleChange = (e) => {
         const keySearch = e.target.value;
@@ -49,13 +51,48 @@ function SearchBox(props) {
         setLoading(false);
         setShowHistory(false);
     };
-    // const handleHideResult = () => {
-    //     setShowHistory(false);
-    // };
+
+    const handleEnter = (e) => {
+        if (e.key === 'Enter') {
+            search(searchKey);
+        }
+    };
+
+    const handleOnFocus = () => {
+        if (!searchKey) {
+            setData(JSON.parse(localStorage.getItem('search-history')) || []);
+        }
+        setShowHistory(true);
+    };
+
+    const goPageSearch = (searchKey) => {
+        navigate({
+            pathname: '/search',
+            search: `?keyword=${searchKey}`,
+        });
+    };
+
+    const search = async (searchKey) => {
+        if (searchKey) {
+            // set localStorage
+            let searchHistory = JSON.parse(localStorage.getItem('search-history')) || [];
+            if (searchHistory.findIndex((a) => a === searchKey.trim()) < 0) {
+                if (searchHistory.length >= 10) {
+                    searchHistory = searchHistory.slice(1);
+                }
+                searchHistory.push(searchKey.trim());
+            }
+            localStorage.setItem('search-history', JSON.stringify(searchHistory));
+        }
+        const resultSearch = await productService.searching({ keyword: searchKey }, params);
+        if (resultSearch.status === 200) {
+            dispatch(searching({ keyword: searchKey, resultSearchProduct: resultSearch.data.data }));
+            goPageSearch(searchKey);
+        }
+    };
 
     useEffect(() => {
         if (!debouncedValue.trim()) {
-            // setSearchResult([]);
             setData(JSON.parse(localStorage.getItem('search-history')) || []);
             return;
         }
@@ -75,32 +112,10 @@ function SearchBox(props) {
         productSearchHint();
     }, [debouncedValue]);
 
-    const handleEnter = (e) => {
-        if (e.key === 'Enter') {
-            search();
-        }
-    };
-
-    const handleOnFocus = () => {
-        if (!searchKey) {
-            setData(JSON.parse(localStorage.getItem('search-history')) || []);
-        }
-        setShowHistory(true);
-    };
-
-    const search = () => {
-        if (searchKey) {
-            // set localStorage
-            let searchHistory = JSON.parse(localStorage.getItem('search-history')) || [];
-            if (searchHistory.findIndex((a) => a === searchKey.trim()) < 0) {
-                if (searchHistory.length >= 10) {
-                    searchHistory = searchHistory.slice(1);
-                }
-                searchHistory.push(searchKey.trim());
-            }
-            localStorage.setItem('search-history', JSON.stringify(searchHistory));
-        }
-    };
+    useEffect(() => {
+        search(debouncedValue);
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className={cx('header__search')}>
@@ -130,10 +145,12 @@ function SearchBox(props) {
                             <ul className={cx('header__search-history-list')}>
                                 {data.map((item, index) => (
                                     <Link
-                                        to={`/search?keyword=${item}`}
+                                        // to={`/search?keyword=${item}`}
+                                        to=""
                                         key={index}
                                         onClick={() => {
                                             searchHistoryRef.current.style.display = 'none';
+                                            search(item);
                                             // goToPosts();
                                         }}
                                         className={cx('header__search-history-item')}
@@ -185,8 +202,7 @@ function SearchBox(props) {
                 </ul>
             </div> */}
             {/*  Button search */}
-            <button className={cx('header__search-btn')} onClick={search}>
-                {' '}
+            <button className={cx('header__search-btn')} onClick={() => search(searchKey)}>
                 <FontAwesomeIcon icon={faMagnifyingGlass} className={cx('header__search-btn-icon')} />
             </button>
         </div>

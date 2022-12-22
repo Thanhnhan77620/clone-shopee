@@ -7,10 +7,11 @@ import Button from '../Button';
 
 import styles from './ResultSearch.module.scss';
 import ProductItem from '../Product/ProductItem';
+import { useSelector } from 'react-redux';
 
 const cx = classnames.bind(styles);
 function ResultSearch({ data = [] }) {
-    console.log(data);
+    const { resultSearchProduct } = useSelector((state) => state.product);
     return (
         <>
             {/* <!-- Home filter --> */}
@@ -66,7 +67,7 @@ function ResultSearch({ data = [] }) {
                 {/* <!-- Grid -> row-> column--> */}
                 <div className="grid__row">
                     {/* <!-- Product item --> */}
-                    {data.map((item) => (
+                    {resultSearchProduct.map((item) => (
                         <div key={item.id} className="grid__column-2-4">
                             <ProductItem item={item} />
                         </div>

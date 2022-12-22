@@ -2,19 +2,21 @@ import { createSlice } from "@reduxjs/toolkit";
 
 const initialState = {
     resultSearchProduct: JSON.parse(localStorage.getItem('resultSearchProduct')) || [],
+    keyword: ''
 }
 
 const product = createSlice({
     name: 'product',
     initialState,
     reducers: {
-        search: (state, action) => {
-            console.log(state);
-            console.log(action);
+        searching: (state, action) => {
+            const { keyword, resultSearchProduct } = action.payload;
+            state.keyword = keyword
+            state.resultSearchProduct = resultSearchProduct
         },
     }
 })
 
 const { reducer, actions } = product;
-export const { search } = actions;
+export const { searching } = actions;
 export default reducer;
