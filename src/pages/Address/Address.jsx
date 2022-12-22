@@ -9,7 +9,7 @@ const cx = classnames.bind(styles);
 function Address() {
     const addresses = [
         {
-            fullName: 'Nguyễn Thanh Nhân',
+            fullName: 'Nguyễn Tấn Quốc Khánh',
             phone: '363677492',
             location: 'Số 1, ấp 1 Xã Núi Tượng, Huyện Tân Phú, Đồng Nai',
             isDefault: 1,

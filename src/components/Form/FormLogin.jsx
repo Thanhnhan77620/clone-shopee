@@ -13,11 +13,15 @@ import { toastError, toastSuccess } from '~/assets/js/toast-message';
 
 //slice
 import { login } from '~/slices/authSlice';
-import { getAll } from '~/slices/cartSlice';
+import { getAllCart } from '~/slices/cartSlice';
+import { getAllCate } from '~/slices/categorySlice';
+import { getAllBrand } from '~/slices/brandSlice';
 
 //service
 import * as authService from '~/services/authService';
 import * as cartService from '~/services/cartService';
+import * as categoryService from '~/services/categoryService';
+import * as brandService from '~/services/brandService';
 
 const cx = classnames.bind(styles);
 function FormLogin() {
@@ -44,7 +48,23 @@ function FormLogin() {
 
                 Promise.resolve(cartService.getAll()).then((e) => {
                     if (e.status === 201) {
-                        dispatch(getAll(e.data));
+                        dispatch(getAllCart(e.data));
+                    } else {
+                        toastError(e.errors.message);
+                    }
+                });
+
+                Promise.resolve(categoryService.getAll()).then((e) => {
+                    if (e.status === 200) {
+                        dispatch(getAllCate(e.data.data));
+                    } else {
+                        toastError(e.errors.message);
+                    }
+                });
+
+                Promise.resolve(brandService.getAll()).then((e) => {
+                    if (e.status === 200) {
+                        dispatch(getAllBrand(e.data.data));
                     } else {
                         toastError(e.errors.message);
                     }

@@ -1,17 +1,74 @@
 //react component
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import classsname from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
+//custom component
+import Button from '~/components/Button';
+
+//service
+import * as paymentService from '~/services/paymentService';
+
 //style
 import style from './Checkout.model.scss';
-import Button from '~/components/Button';
 const cx = classsname.bind(style);
 
 function Checkout() {
+    const widths = ['45%', '35%', '10%', '20%', '10%'];
     const [searchParams] = useSearchParams();
-    const widths = ['40%', '30%', '10%', '10%', '10%'];
+    const navigate = useNavigate();
+
+    const cartForPayments = JSON.parse(window.atob(searchParams.get('state')));
+
+    const productClassification = (cart) => {
+        const arr = [];
+        const { tierModel, discount } = cart.product;
+        arr.push(`${discount}%`);
+        tierModel.forEach((item) => arr.push(item.currentModel.name));
+        return arr.join(', ');
+    };
+
+    const sum = () => {
+        return cartForPayments.reduce(function (acc, cur) {
+            return acc + cur.product.price * cur.product.quantity;
+        }, 0);
+    };
+
+    const payment = () => {
+        const body = {
+            totalAmount: sum(),
+            products: [],
+            address: 1,
+            note: 'note',
+        };
+        cartForPayments.forEach((item) => {
+            const { id, discount, priceBeforeDiscount, quantity, tierModel } = item.product;
+            const product = {
+                productId: id,
+                discount,
+                priceBeforeDiscount,
+                quantity,
+                tierModels: [],
+            };
+
+            tierModel.forEach((item) => {
+                const tierModel = {
+                    tierModelId: item.id,
+                    modelId: item.currentModel.id,
+                };
+                product.tierModels.push(tierModel);
+            });
+
+            body.products.push(product);
+        });
+        Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
+            if (res.status === 201) {
+                window.open(res.data);
+            }
+        });
+    };
+
     return (
         <div className={cx('container')}>
             <div className={cx('card-swap', 'card-address-swap')}>
@@ -24,7 +81,7 @@ function Checkout() {
 
                 <div className={cx('card-address-swap_content')}>
                     <div className={cx('content-info')}>
-                        Nguyễn Thanh Nhân <br />
+                        Nguyễn Tấn Quốc Khánh <br />
                         (+84) 363677492
                     </div>
 
@@ -62,8 +119,8 @@ function Checkout() {
                 </div>
 
                 <div className={cx('card-main-container')}>
-                    {widths.map((item) => (
-                        <div className={cx('card-main-swap_content')}>
+                    {cartForPayments.map((item, index) => (
+                        <div key={index} className={cx('card-main-swap_content')}>
                             <div className={cx('content-info')} style={{ width: widths[0] }}>
                                 <div className={cx('content-info_img')}>
                                     <img
@@ -72,21 +129,19 @@ function Checkout() {
                                         width={50}
                                     />
                                 </div>
-                                <div className={cx('content-info_name')}>
-                                    Ốp Điện Thoại TPU Mềm Họa Tiết Hoạt Hình Cho ne tHoạt Hình Cho iPhone
-                                </div>
+                                <div className={cx('content-info_name')}>{item.product.name}</div>
                             </div>
                             <div className={cx('content-model')} style={{ width: widths[1] }}>
-                                Loại: 207,iPhone 13 Pro Max
+                                Loại: {productClassification(item)}
                             </div>
                             <div className={cx('content-price')} style={{ width: widths[2], textAlign: 'right' }}>
-                                ₫25.000
+                                ₫{item.product.price}
                             </div>
                             <div className={cx('content-quantity')} style={{ width: widths[3], textAlign: 'center' }}>
-                                11
+                                {item.product.quantity}
                             </div>
                             <div className={cx('content-total')} style={{ width: widths[4], textAlign: 'right' }}>
-                                ₫25.000
+                                ₫{item.product.price * item.product.quantity}
                             </div>
                         </div>
                     ))}
@@ -100,35 +155,36 @@ function Checkout() {
                         <Button
                             normal
                             border
-                            className={cx('group-color-list__item')}
-                            // onClick={() => handleSelectModel(item.name, model)}
-                        >
-                            Ví MoMo
-                            {/* <div className={cx('group-color-list__item--tick')}>
-                                <FontAwesomeIcon icon={faCheck} className={cx('group-color-list__item-icon')} />
-                            </div> */}
-                        </Button>
-                        <Button
-                            normal
-                            border
                             className={cx('group-color-list__item', 'active')}
                             // onClick={() => handleSelectModel(item.name, model)}
                         >
-                            Thanh toán khi nhận Hàng
+                            Ví MoMo
                             <div className={cx('group-color-list__item--tick')}>
                                 <FontAwesomeIcon icon={faCheck} className={cx('group-color-list__item-icon')} />
                             </div>
                         </Button>
+                        <Button
+                            normal
+                            border
+                            className={cx('group-color-list__item')}
+                            // onClick={() => handleSelectModel(item.name, model)}
+                        >
+                            Thanh toán khi nhận Hàng
+                            {/* <div className={cx('group-color-list__item--tick')}>
+                                <FontAwesomeIcon icon={faCheck} className={cx('group-color-list__item-icon')} />
+                            </div> */}
+                        </Button>
                     </div>
                 </div>
+
                 <div className={cx('card-payment-swap_main')}>
                     <div className={cx('main-detail')}>
                         <div style={{ flex: 1 }}></div>
                         <div className={cx('main-detail_label')} style={{ width: '15%' }}>
                             Tổng tiền hàng
                         </div>
-                        <div className={cx('main-detail_total')} style={{ width: '10%', textAlign: 'right' }}>
-                            ₫25.000
+                        <div className={cx('main-detail_total')} style={{ width: '20%', textAlign: 'right' }}>
+                            ₫{sum()}
                         </div>
                     </div>
                     <div className={cx('main-detail')}>
@@ -136,8 +192,8 @@ function Checkout() {
                         <div className={cx('main-detail_label')} style={{ width: '15%' }}>
                             Tổng thanh toán:
                         </div>
-                        <div className={cx('main-detail_total', 'final')} style={{ width: '10%', textAlign: 'right' }}>
-                            ₫25.000
+                        <div className={cx('main-detail_total', 'final')} style={{ width: '20%', textAlign: 'right' }}>
+                            ₫{sum()}
                         </div>
                     </div>
                 </div>
@@ -146,7 +202,7 @@ function Checkout() {
                         Nhấn "Đặt hàng" đồng nghĩa với việc bạn đồng ý tuân theo mọi điều khoản
                     </div>
 
-                    <Button primary large className={cx('footer_btn')}>
+                    <Button primary large className={cx('footer_btn')} onClick={payment}>
                         Đặt hàng
                     </Button>
                 </div>

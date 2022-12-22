@@ -15,7 +15,7 @@ import Button from '~/components/Button';
 import * as cartService from '~/services/cartService';
 
 //slice
-import { getAll, remove } from '~/slices/cartSlice';
+import { getAllCart, remove } from '~/slices/cartSlice';
 
 //style
 import style from './Cart.module.scss';
@@ -37,8 +37,8 @@ function Cart() {
     const handleDeleteCart = async (type = 'all', item = {}) => {
         let body = {};
         const products = [];
-        if (type === 'all') {
-            if (cartSelected.length) {
+        if (cartSelected.length) {
+            if (type === 'all') {
                 carts.forEach((item) => {
                     if (cartSelected.findIndex((a) => a === item.id) > -1) {
                         const { id, tierModel } = item.product;
@@ -53,42 +53,54 @@ function Cart() {
                     body = { products };
                 }
             } else {
-                toastWarning('Select Item!');
-            }
-        } else {
-            if (Object.keys(item).length) {
-                const { id, tierModel } = item.product;
-                const product = { productId: id, tierModels: [] };
-                tierModel.forEach((element) => {
-                    product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
-                });
-                products.push(product);
-                if (products.length) {
-                    body = { products };
+                if (Object.keys(item).length) {
+                    const { id, tierModel } = item.product;
+                    const product = { productId: id, tierModels: [] };
+                    tierModel.forEach((element) => {
+                        product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
+                    });
+                    products.push(product);
+                    if (products.length) {
+                        body = { products };
+                    }
                 }
             }
-        }
 
-        const req = await cartService.remove(body);
-        if (req.status === 201) {
-            if (type === 'all') {
-                setCartSelected([]);
+            const req = await cartService.remove(body);
+            if (req.status === 201) {
+                if (type === 'all') {
+                    setCartSelected([]);
+                } else {
+                    setCartSelected([...cartSelected.filter((a) => a !== item.id)]);
+                }
+
+                dispatchActinGetAll();
             } else {
-                setCartSelected([...cartSelected.filter((a) => a !== item.id)]);
+                toastError('Delete Item From Cart Fail!');
             }
-
-            dispatchActinGetAll();
         } else {
-            toastError('Delete Item From Cart Fail!');
+            toastWarning('Select Item!');
         }
     };
 
     const navigate = useNavigate();
-    const goToCheckout = () =>
-        navigate({
-            pathname: '/checkout',
-            search: '?state=nhan',
-        });
+
+    const goToCheckout = () => {
+        if (cartSelected.length) {
+            const carForPayments = [];
+            carts.forEach((item) => {
+                if (cartSelected.findIndex((a) => a === item.id) > -1) {
+                    carForPayments.push(item);
+                }
+            });
+            navigate({
+                pathname: '/checkout',
+                search: `?state=${window.btoa(JSON.stringify(carForPayments))}`,
+            });
+        } else {
+            toastWarning('Select Item!');
+        }
+    };
 
     const productClassification = (cart) => {
         const arr = [];
@@ -117,7 +129,7 @@ function Cart() {
     const dispatchActinGetAll = async () => {
         const req = await cartService.getAll();
         if (req.status === 201) {
-            dispatch(getAll(req.data));
+            dispatch(getAllCart(req.data));
         }
     };
 

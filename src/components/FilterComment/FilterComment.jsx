@@ -23,7 +23,7 @@ function FilterComment() {
         listStar.push({ id: i, name: 'Sao' });
     }
     const object = {
-        userName: 'thanhnhan77620',
+        userName: 'khanhtq123',
         rating: 5,
         date: '2022-03-30 22:54',
         content: 'Giá đỡ khá chắc chắn, mua về để laptop cho đở mỏi lưng',

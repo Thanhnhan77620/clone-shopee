@@ -32,7 +32,7 @@ import * as bannerService from '~/services/bannerService';
 import * as cartService from '~/services/cartService';
 
 //slice
-import { addItem, getAll } from '~/slices/cartSlice';
+import { addItem, getAllCart } from '~/slices/cartSlice';
 
 //style
 import styles from './ProductDetail.module.scss';
@@ -108,7 +108,7 @@ function ProductDetail(props) {
             toastSuccess('Add Item Into Cart Successfully!');
             const req = await cartService.getAll();
             if (req.status === 201) {
-                dispatch(getAll(req.data));
+                dispatch(getAllCart(req.data));
             }
         } else {
             toastError('Add Item Into Cart Fail!');

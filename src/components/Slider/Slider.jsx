@@ -142,24 +142,20 @@ function Slider({
         }
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [listItem]);
-    console.log(listItem);
     return (
         <div className={cx('category-swapper')}>
             {CarouselHeaderComponent && <CarouselHeaderComponent />}
             {/* content */}
-            {
-                listItem.length &&
+            {listItem.length && (
                 <div className={cx('category-content')}>
                     <div className={cx('carousel')}>
                         {/* list category swapper*/}
                         <div className={cx('carousel-swapper')}>
                             <ul className={cx('carousel-list')}>
                                 {/* component carousel item here */}
-                                {
-                                    listItem.map((item, index) => (
-                                        <CarouselItemComponent key={index} item={item} data-index={index} />
-                                    ))
-                                }
+                                {listItem.map((item, index) => (
+                                    <CarouselItemComponent key={index} item={item} data-index={index} />
+                                ))}
                             </ul>
                         </div>
 
@@ -174,7 +170,7 @@ function Slider({
                         </div>
                     </div>
                 </div>
-            }
+            )}
         </div>
     );
 }
