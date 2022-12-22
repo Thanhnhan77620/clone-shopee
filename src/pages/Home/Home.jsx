@@ -117,7 +117,7 @@ function Home() {
             <div className={cx('container-body')}>
                 <div className="grid">
                     <Category data={categories} />
-                    {/* <Banner type="horizontal" data={listHorizontal} />
+                    <Banner type="horizontal" data={listHorizontal} />
                     <Brand listBanner={listHorizontal} />
                     <div className={cx('section-suggest')}>
                         <div className={cx('section-suggest-header')}>
@@ -127,13 +127,13 @@ function Home() {
                             <div className="grid__row">
                                 {data.map((item) => (
                                     <div key={item.id} className="grid__column-2">
-                                        <ProductItem item={item} />
+                                        {/* <ProductItem item={item} /> */}
                                     </div>
                                 ))}
                             </div>
                         </div>
                     </div>
-                    <TopSearch data={data} /> */}
+                    <TopSearch data={data} />
                 </div>
             </div>
         </>
