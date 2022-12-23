@@ -66,10 +66,12 @@ function SearchBox(props) {
     };
 
     const goPageSearch = (searchKey) => {
-        navigate({
-            pathname: '/search',
-            search: `?keyword=${searchKey}`,
-        });
+        if (window.location.pathname === '/search') {
+            navigate({
+                pathname: '/search',
+                search: `?keyword=${searchKey}`,
+            });
+        }
     };
 
     const search = async (searchKey) => {
