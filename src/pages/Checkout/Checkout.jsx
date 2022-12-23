@@ -39,7 +39,7 @@ function Checkout() {
         const body = {
             totalAmount: sum(),
             products: [],
-            address: 1,
+            address: 15,
             note: 'note',
         };
         cartForPayments.forEach((item) => {
@@ -156,7 +156,7 @@ function Checkout() {
                             normal
                             border
                             className={cx('group-color-list__item', 'active')}
-                            // onClick={() => handleSelectModel(item.name, model)}
+                        // onClick={() => handleSelectModel(item.name, model)}
                         >
                             Ví MoMo
                             <div className={cx('group-color-list__item--tick')}>
@@ -167,7 +167,7 @@ function Checkout() {
                             normal
                             border
                             className={cx('group-color-list__item')}
-                            // onClick={() => handleSelectModel(item.name, model)}
+                        // onClick={() => handleSelectModel(item.name, model)}
                         >
                             Thanh toán khi nhận Hàng
                             {/* <div className={cx('group-color-list__item--tick')}>
