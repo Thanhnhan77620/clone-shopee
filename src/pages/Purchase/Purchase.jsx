@@ -2,42 +2,88 @@
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faSearch } from '@fortawesome/free-solid-svg-icons';
 import classnames from 'classnames/bind';
+import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
 //custom component
 import Button from '~/components/Button';
 import images from '~/assets/images';
+import { PENDING, CANCEL, DELIVERING, SUCCESSFUL } from '~/commons';
+import { toastError } from '~/assets/js/toast-message';
+
+//service
+import * as orderService from '~/services/orderService';
 
 //style
 import style from './Purchase.module.scss';
-import { useSelector } from 'react-redux';
+
 const cx = classnames.bind(style);
 
-function Purchase(prps) {
-    const arr = [1, 2, 3, 4];
-    const { orders } = useSelector((state) => state.order);
-    console.log(orders);
+function Purchase() {
+    // const { orders } = useSelector((state) => state.order);
+    const [orders, setOrders] = useState([]);
+    const [filter, setFilter] = useState('');
+    const [ordersFiltered, setOrdersFiltered] = useState([]);
+
+    const getAllOrder = async () => {
+        const req = await orderService.getAll();
+        if (req.status === 200) {
+            setOrders(req.data.data);
+        } else {
+            toastError(req.errors.message);
+        }
+    };
+
+    const filterOrder = () => {
+        setOrdersFiltered((prev) => {
+            if (filter) {
+                return orders.filter((item) => item.status === filter);
+            } else {
+                return orders;
+            }
+        });
+    };
+
+    const getTypeProduct = (product) => {
+        const { discount, params } = product;
+        const tierModelString = [`${discount}%`];
+        params.tierModels.forEach((model) => {
+            tierModelString.push(model.modelName);
+        });
+        return tierModelString.join(', ');
+    };
+
+    useEffect(() => {
+        filterOrder();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [filter, orders]);
+
+    useEffect(() => {
+        getAllOrder();
+    }, []);
+
     return (
         <div>
             {/* header */}
             <div className={cx('cart', 'bs-t', 'header')}>
-                <div className={cx('header-item', 'active')}>
-                    <span>Tất cả</span>
+                <div className={cx('header-item', filter === '' && 'active')}>
+                    <span onClick={() => setFilter('')}>Tất cả</span>
                 </div>
-                <div className={cx('header-item')}>
-                    <span>Chờ duyệt</span>
+                <div className={cx('header-item', filter === PENDING && 'active')}>
+                    <span onClick={() => setFilter(PENDING)}>Chờ duyệt</span>
                 </div>
-                <div className={cx('header-item')}>
-                    <span>Đang giao</span>
+                <div className={cx('header-item', filter === DELIVERING && 'active')}>
+                    <span onClick={() => setFilter(DELIVERING)}>Đang giao</span>
                 </div>
-                <div className={cx('header-item')}>
-                    <span>Hoàn thành</span>
+                <div className={cx('header-item', filter === SUCCESSFUL && 'active')}>
+                    <span onClick={() => setFilter(SUCCESSFUL)}>Hoàn thành</span>
                 </div>
-                <div className={cx('header-item')}>
-                    <span>Đã hủy</span>
+                <div className={cx('header-item', filter === CANCEL && 'active')}>
+                    <span onClick={() => setFilter(CANCEL)}>Đã hủy</span>
                 </div>
             </div>
 
-            {orders.length > 0 ? (
+            {ordersFiltered.length > 0 ? (
                 <>
                     {/* search */}
                     <div className={cx('search-swap')}>
@@ -46,29 +92,39 @@ function Purchase(prps) {
                     </div>
 
                     {/* cart item */}
-                    {orders.map((order, index) => (
+                    {ordersFiltered.map((order, index) => (
                         <div className={cx('item-top-container')} key={index}>
                             <div className={cx('cart', 'item-top-swap')}>
                                 <div className={cx('top-header')}>
-                                    <span>Đã hủy</span>
+                                    <span>{order.status}</span>
                                 </div>
                                 <div className={cx('top-main')}>
-                                    {arr.map((item, index) => (
-                                        <div className={cx('top-main-item')} ke={index}>
-                                            <div className={cx('item-img')}></div>
+                                    {order.products.map((product, index) => (
+                                        <div className={cx('top-main-item')} key={index}>
+                                            <div
+                                                className={cx('item-img')}
+                                                style={{ backgroundImage: `url(${product.params.imagePath})` }}
+                                            ></div>
                                             <div className={cx('item-info')}>
-                                                <div className={cx('item-info_name')}>
-                                                    Ốp Điện Thoại TPU Mềm Họa Tiết Hoạt Hình Cho iPhone 14 13 12 11 Pro
-                                                    Max X XR Xs Max 8 7 6 6s Plus SE 2020
-                                                </div>
+                                                <div className={cx('item-info_name')}>{product.params.productName}</div>
                                                 <div className={cx('item-info_type')}>
-                                                    Phân loại hàng: 208, Iphone 14 Pro Max
+                                                    Phân loại hàng: {getTypeProduct(product)}
                                                 </div>
-                                                <div className={cx('item-info_quantity')}>x5</div>
+                                                <div className={cx('item-info_quantity')}>x{product.quantity}</div>
                                             </div>
                                             <div className={cx('item-price')}>
-                                                <div className={cx('item-price_old')}>đ31.000.000</div>
-                                                <div className={cx('item-price_new')}>đ25.000.000</div>
+                                                {product.discount > 0 ? (
+                                                    <>
+                                                        <div className={cx('item-price_old')}>
+                                                            đ{product.priceBeforeDiscount}
+                                                        </div>
+                                                        <div className={cx('item-price_new')}>đ{product.price}</div>
+                                                    </>
+                                                ) : (
+                                                    <div className={cx('item-price_new')}>
+                                                        đ{product.priceBeforeDiscount}
+                                                    </div>
+                                                )}
                                             </div>
                                         </div>
                                     ))}
@@ -77,14 +133,22 @@ function Purchase(prps) {
                             <div className={cx('cart', 'item-bottom-swap')}>
                                 <div className={cx('bottom-header')}>
                                     <div className={cx('bottom-header_label')}>Thành tiền:</div>
-                                    <div className={cx('bottom-header_total')}>đ25.000.000</div>
+                                    <div className={cx('bottom-header_total')}>đ{order.totalAmount}</div>
                                 </div>
                                 <div className={cx('bottom-main')}>
                                     <div className={cx('bottom-control-status')}>Đã hủy bởi bạn</div>
                                     <div className={cx('bottom-control-group')}>
-                                        <Button primary className={cx('bottom-control-group_btnRebuy')}>
-                                            Đánh giá
-                                        </Button>
+                                        {order.status === SUCCESSFUL && (
+                                            <Button primary className={cx('bottom-control-group_btnRebuy')}>
+                                                Đánh giá
+                                            </Button>
+                                        )}
+
+                                        {order.status === PENDING && (
+                                            <Button primary className={cx('bottom-control-group_btnRebuy')}>
+                                                Hủy đơn hàng
+                                            </Button>
+                                        )}
                                         <Button primary>Mua lại</Button>
                                     </div>
                                 </div>

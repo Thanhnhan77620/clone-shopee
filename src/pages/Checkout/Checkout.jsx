@@ -1,32 +1,34 @@
 //react component
-import { useSearchParams } from 'react-router-dom';
+import { useNavigate, useSearchParams } from 'react-router-dom';
 import classsname from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faLocationDot } from '@fortawesome/free-solid-svg-icons';
+import { useSelector } from 'react-redux';
+import { useState, useEffect } from 'react';
 
 //custom component
 import Button from '~/components/Button';
 import { toastError } from '~/assets/js/toast-message';
-import { useState } from 'react';
-import { useEffect } from 'react';
 import Popup from '~/components/Popup';
 import { ListAddress } from '~/components/Form/FormAddress';
+import { PAYMENT_BY_MOMO, PAYMENT_BY_CASH } from '~/commons';
 
 //service
 import * as paymentService from '~/services/paymentService';
-import * as addressService from '~/services/addressService';
 
 //style
 import style from './Checkout.model.scss';
-import { useSelector } from 'react-redux';
 const cx = classsname.bind(style);
 
 function Checkout() {
-    const { addresses } = useSelector((state) => state.address);
     const widths = ['45%', '35%', '10%', '20%', '10%'];
+
+    const { addresses } = useSelector((state) => state.address);
+    const navigate = useNavigate();
     const [searchParams] = useSearchParams();
     const [addressDefault, setAddressDefault] = useState();
     const [showPopup, setShowPopup] = useState(false);
+    const [paymentType, setPaymentType] = useState(PAYMENT_BY_MOMO);
 
     const cartForPayments = JSON.parse(window.atob(searchParams.get('state')));
 
@@ -59,10 +61,11 @@ function Checkout() {
             note: 'note',
         };
         cartForPayments.forEach((item) => {
-            const { id, name, discount, priceBeforeDiscount, quantity, tierModel } = item.product;
+            const { id, name, imagePath, discount, priceBeforeDiscount, quantity, tierModel } = item.product;
             const product = {
                 productId: id,
                 name,
+                imagePath,
                 discount,
                 priceBeforeDiscount,
                 quantity,
@@ -72,7 +75,7 @@ function Checkout() {
             tierModel.forEach((item) => {
                 const tierModel = {
                     tierModelId: item.id,
-                    tierName: item.name,
+                    tierModelName: item.name,
                     modelId: item.currentModel.id,
                     modelName: item.currentModel.name,
                 };
@@ -81,14 +84,27 @@ function Checkout() {
 
             body.products.push(product);
         });
-        console.log(body);
-        Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
-            if (res.status === 201) {
-                window.open(res.data);
-            } else {
-                toastError(res.errors.message);
-            }
-        });
+
+        if (paymentType === PAYMENT_BY_MOMO) {
+            Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
+                console.log(res);
+                if (res.status === 201) {
+                    window.open(res.data);
+                } else {
+                    toastError(res.errors.message);
+                }
+            });
+        } else {
+            Promise.resolve(paymentService.paymentByCash(body)).then((res) => {
+                if (res.status === 201) {
+                    navigate({
+                        pathname: '/user/purchase',
+                    });
+                } else {
+                    toastError(res.errors.message);
+                }
+            });
+        }
     };
 
     const handleClosePopup = () => {
@@ -199,24 +215,28 @@ function Checkout() {
                         <Button
                             normal
                             border
-                            className={cx('group-color-list__item', 'active')}
-                            // onClick={() => handleSelectModel(item.name, model)}
+                            className={cx('group-color-list__item', paymentType === PAYMENT_BY_MOMO && 'active')}
+                            onClick={() => setPaymentType(PAYMENT_BY_MOMO)}
                         >
                             Ví MoMo
-                            <div className={cx('group-color-list__item--tick')}>
-                                <FontAwesomeIcon icon={faCheck} className={cx('group-color-list__item-icon')} />
-                            </div>
+                            {paymentType === PAYMENT_BY_MOMO && (
+                                <div className={cx('group-color-list__item--tick')}>
+                                    <FontAwesomeIcon icon={faCheck} className={cx('group-color-list__item-icon')} />
+                                </div>
+                            )}
                         </Button>
                         <Button
                             normal
                             border
-                            className={cx('group-color-list__item')}
-                            // onClick={() => handleSelectModel(item.name, model)}
+                            className={cx('group-color-list__item', paymentType === PAYMENT_BY_CASH && 'active')}
+                            onClick={() => setPaymentType(PAYMENT_BY_CASH)}
                         >
                             Thanh toán khi nhận Hàng
-                            {/* <div className={cx('group-color-list__item--tick')}>
-                                <FontAwesomeIcon icon={faCheck} className={cx('group-color-list__item-icon')} />
-                            </div> */}
+                            {paymentType === PAYMENT_BY_CASH && (
+                                <div className={cx('group-color-list__item--tick')}>
+                                    <FontAwesomeIcon icon={faCheck} className={cx('group-color-list__item-icon')} />
+                                </div>
+                            )}
                         </Button>
                     </div>
                 </div>
