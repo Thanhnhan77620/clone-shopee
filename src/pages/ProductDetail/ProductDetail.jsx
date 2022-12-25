@@ -199,12 +199,12 @@ function ProductDetail(props) {
                         </div>
                         <div className={cx('group-price-swapper')}>
                             <div className={cx('group-price')}>
-                                {productDetail.discount && (
+                                {productDetail.discount > 0 && (
                                     <div className={cx('group-price__old')}>{productDetail.priceBeforeDiscount}₫</div>
                                 )}
 
                                 <div className={cx('group-price__new')}>{productDetail.price}₫</div>
-                                {productDetail.discount && (
+                                {productDetail.discount > 0 && (
                                     <div className={cx('group-price__sale')}>{productDetail.discount}% GIẢM</div>
                                 )}
                             </div>

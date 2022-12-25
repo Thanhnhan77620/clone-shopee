@@ -48,7 +48,10 @@ function Purchase() {
 
     const getTypeProduct = (product) => {
         const { discount, params } = product;
-        const tierModelString = [`${discount}%`];
+        const tierModelString = [];
+        if (discount) {
+            tierModelString.push(`${discount}%`);
+        }
         params.tierModels.forEach((model) => {
             tierModelString.push(model.modelName);
         });

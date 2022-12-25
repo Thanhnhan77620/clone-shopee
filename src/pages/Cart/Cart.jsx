@@ -104,7 +104,9 @@ function Cart() {
     const productClassification = (cart) => {
         const arr = [];
         const { tierModel, discount } = cart.product;
-        arr.push(`${discount}%`);
+        if (discount) {
+            arr.push(`${discount}%`);
+        }
         tierModel.forEach((item) => arr.push(item.currentModel.name));
         return arr.join(', ');
     };

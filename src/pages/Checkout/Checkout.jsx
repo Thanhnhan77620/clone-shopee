@@ -42,7 +42,9 @@ function Checkout() {
     const productClassification = (cart) => {
         const arr = [];
         const { tierModel, discount } = cart.product;
-        arr.push(`${discount}%`);
+        if (discount) {
+            arr.push(`${discount}%`);
+        }
         tierModel.forEach((item) => arr.push(item.currentModel.name));
         return arr.join(', ');
     };
@@ -192,7 +194,7 @@ function Checkout() {
                                 <div className={cx('content-info_name')}>{item.product.name}</div>
                             </div>
                             <div className={cx('content-model')} style={{ width: widths[1] }}>
-                                Loại: {productClassification(item)}
+                                Phân loại hàng: {productClassification(item)}
                             </div>
                             <div className={cx('content-price')} style={{ width: widths[2], textAlign: 'right' }}>
                                 ₫{item.product.price}
