@@ -6,37 +6,49 @@ import { useState, useEffect } from 'react';
 
 //custom component
 import Button from '~/components/Button';
-import CreateAddress from './Form/CreateAddress';
 import Popup from '~/components/Popup';
 import { toastError } from '~/assets/js/toast-message';
-import EditAddress from './Form/EditAddress';
+import { CreateAddress, EditAddress } from '~/components/Form/FormAddress';
 
 //service
 import * as addressService from '~/services/addressService';
 
+//slice
+import { getAllAddress } from '~/slices/addressSlice';
+
 //style
 import styles from './Address.module.scss';
+import { useDispatch, useSelector } from 'react-redux';
 const cx = classnames.bind(styles);
 
 function Address() {
-    const [addresses, setAddresses] = useState([]);
+    const dispatch = useDispatch();
+    const { addresses } = useSelector((state) => state.address);
+    // const [addresses, setAddresses] = useState([]);s
     const [addressSelected, setAddressSelected] = useState();
     const [showFormCreate, setShowFormCreate] = useState(false);
     const [showFormEdit, setShowFormEdit] = useState(false);
+
+    const dispatchActionGetAll = async () => {
+        const req = await addressService.getAll();
+        if (req.status === 200) {
+            dispatch(getAllAddress(req.data.data));
+        }
+    };
 
     const handleClose = () => {
         setShowFormCreate(false);
         setShowFormEdit(false);
     };
 
-    const getAllAddress = async () => {
-        const req = await addressService.getAll();
-        if (req.status === 200) {
-            setAddresses(req.data.data);
-        } else {
-            toastError(req.errors.message);
-        }
-    };
+    // const getAllAddress = async () => {
+    //     const req = await addressService.getAll();
+    //     if (req.status === 200) {
+    //         setAddresses(req.data.data);
+    //     } else {
+    //         toastError(req.errors.message);
+    //     }
+    // };
 
     const handleClickEdit = (address) => {
         setAddressSelected(address);
@@ -46,7 +58,8 @@ function Address() {
     const handleRemove = async (id) => {
         const req = await addressService.remove(id);
         if (req.status === 200) {
-            getAllAddress();
+            // getAllAddress();
+            dispatchActionGetAll();
         } else {
             toastError(req.errors.message);
         }
@@ -59,15 +72,16 @@ function Address() {
         };
         const req = await addressService.update(body);
         if (req.status === 200) {
-            getAllAddress();
+            // getAllAddress();
+            dispatchActionGetAll();
         } else {
             toastError(req.errors.message);
         }
     };
 
-    useEffect(() => {
-        getAllAddress();
-    }, []);
+    // useEffect(() => {
+    //     getAllAddress();
+    // }, []);
 
     return (
         <div className={cx('container')}>
@@ -145,12 +159,12 @@ function Address() {
                 })}
             </div>
             <Popup
-                FormComponent={<CreateAddress handleClose={handleClose} fetchData={getAllAddress} />}
+                FormComponent={<CreateAddress handleClose={handleClose} fetchData={dispatchActionGetAll} />}
                 isShow={showFormCreate}
             />
             <Popup
                 FormComponent={
-                    <EditAddress handleClose={handleClose} item={addressSelected} fetchData={getAllAddress} />
+                    <EditAddress handleClose={handleClose} item={addressSelected} fetchData={dispatchActionGetAll} />
                 }
                 isShow={showFormEdit}
             />

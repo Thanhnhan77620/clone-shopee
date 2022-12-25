@@ -5,6 +5,7 @@ import cateReducer from "~/slices/categorySlice"
 import brandReducer from "~/slices/brandSlice"
 import productReducer from "~/slices/productSlice"
 import orderReducer from "~/slices/orderSlice"
+import addressReducer from "~/slices/addressSlice"
 
 const rootReducer = {
     auth: authReducer,
@@ -13,6 +14,7 @@ const rootReducer = {
     brand: brandReducer,
     product: productReducer,
     order: orderReducer,
+    address: addressReducer,
 }
 
 const store = configureStore({

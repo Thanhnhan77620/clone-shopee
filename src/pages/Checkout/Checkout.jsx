@@ -1,26 +1,41 @@
 //react component
-import { useNavigate, useSearchParams } from 'react-router-dom';
+import { useSearchParams } from 'react-router-dom';
 import classsname from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faCheck, faLocationDot } from '@fortawesome/free-solid-svg-icons';
 
 //custom component
 import Button from '~/components/Button';
+import { toastError } from '~/assets/js/toast-message';
+import { useState } from 'react';
+import { useEffect } from 'react';
+import Popup from '~/components/Popup';
+import { ListAddress } from '~/components/Form/FormAddress';
 
 //service
 import * as paymentService from '~/services/paymentService';
+import * as addressService from '~/services/addressService';
 
 //style
 import style from './Checkout.model.scss';
-import { toastError, toastInfo } from '~/assets/js/toast-message';
+import { useSelector } from 'react-redux';
 const cx = classsname.bind(style);
 
 function Checkout() {
+    const { addresses } = useSelector((state) => state.address);
     const widths = ['45%', '35%', '10%', '20%', '10%'];
     const [searchParams] = useSearchParams();
-    const navigate = useNavigate();
+    const [addressDefault, setAddressDefault] = useState();
+    const [showPopup, setShowPopup] = useState(false);
 
     const cartForPayments = JSON.parse(window.atob(searchParams.get('state')));
+
+    const getAddressDefault = async () => {
+        const result = addresses.filter((address) => address.isDefault === true);
+        if (result.length) {
+            setAddressDefault(result[0]);
+        }
+    };
 
     const productClassification = (cart) => {
         const arr = [];
@@ -40,13 +55,14 @@ function Checkout() {
         const body = {
             totalAmount: sum(),
             products: [],
-            address: 1,
+            address: addressDefault.id,
             note: 'note',
         };
         cartForPayments.forEach((item) => {
-            const { id, discount, priceBeforeDiscount, quantity, tierModel } = item.product;
+            const { id, name, discount, priceBeforeDiscount, quantity, tierModel } = item.product;
             const product = {
                 productId: id,
+                name,
                 discount,
                 priceBeforeDiscount,
                 quantity,
@@ -56,13 +72,16 @@ function Checkout() {
             tierModel.forEach((item) => {
                 const tierModel = {
                     tierModelId: item.id,
+                    tierName: item.name,
                     modelId: item.currentModel.id,
+                    modelName: item.currentModel.name,
                 };
                 product.tierModels.push(tierModel);
             });
 
             body.products.push(product);
         });
+        console.log(body);
         Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
             if (res.status === 201) {
                 window.open(res.data);
@@ -71,6 +90,15 @@ function Checkout() {
             }
         });
     };
+
+    const handleClosePopup = () => {
+        setShowPopup(false);
+    };
+
+    useEffect(() => {
+        getAddressDefault();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, [addresses]);
 
     return (
         <div className={cx('container')}>
@@ -82,26 +110,39 @@ function Checkout() {
                     <div className={cx('header-title')}>Địa Chỉ Nhận Hàng</div>
                 </div>
 
-                <div className={cx('card-address-swap_content')}>
-                    <div className={cx('content-info')}>
-                        Nguyễn Tấn Quốc Khánh <br />
-                        (+84) 363677492
-                    </div>
-
-                    <div className={cx('content-location')}>
-                        <div className={cx('content-location_detail')}>
-                            Fpt Software Hồ Chí Minh, lô t2, Đường D 1, Khu Cnc Quận 9, Phường Tân Phú, Thành Phố Thủ
-                            Đức, TP. Hồ Chí Minh
+                {addressDefault ? (
+                    <div className={cx('card-address-swap_content')}>
+                        <div className={cx('content-info')}>
+                            {addressDefault.fullName} <br />
+                            (+84) {addressDefault.phoneNumber}
                         </div>
-                        <div className={cx('content-location_default')}>
-                            <span>Mặc Định</span>
+
+                        <div className={cx('content-location')}>
+                            <div className={cx('content-location_detail')}>{addressDefault.address}</div>
+                            {addressDefault.isDefault && (
+                                <div className={cx('content-location_default')}>
+                                    <span>Mặc Định</span>
+                                </div>
+                            )}
+                        </div>
+
+                        <div className={cx('content-action')}>
+                            <span onClick={() => setShowPopup(true)}>Thay đổi</span>
                         </div>
                     </div>
+                ) : (
+                    <div className={cx('card-address-swap_content')}>
+                        <div className={cx('content-info')}></div>
 
-                    <div className={cx('content-action')}>
-                        <span>Thay đổi</span>
+                        <div className={cx('content-location')}>
+                            <div className={cx('content-location_detail')}></div>
+                        </div>
+
+                        <div className={cx('content-action')}>
+                            <span onClick={() => setShowPopup(true)}>Thêm địa chỉ</span>
+                        </div>
                     </div>
-                </div>
+                )}
             </div>
 
             <div className={cx('card-swap', 'card-main-swap')}>
@@ -210,6 +251,10 @@ function Checkout() {
                     </Button>
                 </div>
             </div>
+            <Popup
+                FormComponent={<ListAddress handleClose={handleClosePopup} fetchData={getAddressDefault} />}
+                isShow={showPopup}
+            />
         </div>
     );
 }

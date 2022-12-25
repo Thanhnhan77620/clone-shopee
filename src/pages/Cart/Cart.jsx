@@ -75,7 +75,7 @@ function Cart() {
                     setCartSelected([...cartSelected.filter((a) => a !== item.id)]);
                 }
 
-                dispatchActinGetAll();
+                dispatchActionGetAll();
             } else {
                 toastError('Delete Item From Cart Fail!');
             }
@@ -118,14 +118,14 @@ function Cart() {
             });
             const req = await cartService.updateQuantity(body);
             if (req.status === 201) {
-                dispatchActinGetAll();
+                dispatchActionGetAll();
             } else {
                 toastError('Update Quantity Fail!');
             }
         }
     };
 
-    const dispatchActinGetAll = async () => {
+    const dispatchActionGetAll = async () => {
         const req = await cartService.getAll();
         if (req.status === 201) {
             dispatch(getAllCart(req.data));
