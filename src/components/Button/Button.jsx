@@ -47,7 +47,6 @@ function Button({
         props.htmlFor = labelFor;
         Comp = 'label';
     }
-
     const classes = cx('btn', {
         [className]: className,
         primary,

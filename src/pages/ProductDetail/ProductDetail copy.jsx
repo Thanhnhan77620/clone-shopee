@@ -228,7 +228,7 @@ function ProductDetail(props) {
                             >
                                 <span>thêm vào giỏ hàng</span>
                             </Button>
-                            <Button large primary>
+                            <Button large primary to="/cart">
                                 Mua Ngay
                             </Button>
                         </div>

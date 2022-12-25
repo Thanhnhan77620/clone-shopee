@@ -9,6 +9,14 @@ import config from '~/config';
 
 const cx = classnames.bind(styles);
 function SideBarUser(props) {
+    const handleClickSidebar = (check) => {
+        const checkBox = document.getElementById('checkbox-dropdown');
+        if (check) {
+            checkBox.checked = true;
+        } else {
+            checkBox.checked = false;
+        }
+    };
     return (
         <div className={cx('sidebar_container')}>
             {/* User group */}
@@ -32,10 +40,16 @@ function SideBarUser(props) {
                 {/* Profile item */}
                 <div className={cx('profile-item')}>
                     {/* Profile item header */}
-                    <Link to={config.routes.user.profile} className={cx('profile-item__header')}>
+                    <input id="checkbox-dropdown" type="checkbox" className={cx('checkbox-dropdown')} hidden />
+                    <Link
+                        to={config.routes.user.profile}
+                        className={cx('profile-item__header')}
+                        onClick={() => handleClickSidebar(true)}
+                    >
                         <img src={images.user} alt="User" className={cx('profile-item__header-icon')} />
                         <div className={cx('profile-item__header-name')}>Tài khoản Của Tôi</div>
                     </Link>
+
                     {/* Profile item body */}
                     <div className={cx('profile-item__body')}>
                         <NavLink
@@ -67,17 +81,19 @@ function SideBarUser(props) {
 
                 <div className={cx('profile-item')}>
                     {/* Profile item header */}
-                    <Link
-                        to={config.routes.user.purchase}
-                        className={cx(
-                            'profile-item__header',
-                            document.location.pathname === config.routes.user.password
-                                ? 'profile-item__link--active'
-                                : '',
-                        )}
-                    >
+                    <Link to={config.routes.user.purchase} className={cx('profile-item__header')}>
                         <img src={images.clipboard} alt="User" className={cx('profile-item__header-icon')} />
-                        <div className={cx('profile-item__header-name')}>Đơn Mua</div>
+                        <div
+                            className={cx(
+                                'profile-item__header-name',
+                                document.location.pathname === config.routes.user.purchase
+                                    ? 'profile-item__link--active'
+                                    : undefined,
+                            )}
+                            onClick={() => handleClickSidebar(false)}
+                        >
+                            Đơn Mua
+                        </div>
                     </Link>
                 </div>
             </div>

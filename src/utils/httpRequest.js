@@ -39,4 +39,15 @@ export const patch = async (path, option = {}, config = {}) => {
     }
 };
 
+export const remove = async (path, config = {}) => {
+    try {
+        const response = await httpRequest.delete(path, config);
+        const { data, status } = response;
+        return { data, status };
+    } catch (error) {
+        const { errors, statusCode } = error.response.data;
+        return { errors, status: statusCode };
+    }
+};
+
 export default httpRequest;

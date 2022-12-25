@@ -11,3 +11,4 @@ export { default as Phone } from './Phone';
 export { default as ConfirmEmail } from './ConfirmEmail';
 export { default as CategoryDetail } from './CategoryDetail';
 export { default as Checkout } from './Checkout';
+export { default as Purchase } from './Purchase';

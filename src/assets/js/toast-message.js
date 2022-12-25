@@ -83,9 +83,9 @@ export function toastWarning(message = '') {
 export function toastError(message = '') {
     toast({
         iconToast: 'fa-solid fa-circle-exclamation',
-        title: 'Warning',
+        title: 'error',
         message,
-        type: 'warning',
+        type: 'error',
         duration: 2000,
     })
 }

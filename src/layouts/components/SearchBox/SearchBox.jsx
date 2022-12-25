@@ -28,7 +28,6 @@ function SearchBox(props) {
 
     const queryParameters = new URLSearchParams(window.location.search);
     const keyword = queryParameters.get('keyword');
-    console.log(keyword);
 
     const navigate = useNavigate();
     const searchHistoryRef = useRef();
@@ -66,12 +65,10 @@ function SearchBox(props) {
     };
 
     const goPageSearch = (searchKey) => {
-        if (window.location.pathname === '/search') {
-            navigate({
-                pathname: '/search',
-                search: `?keyword=${searchKey}`,
-            });
-        }
+        navigate({
+            pathname: '/search',
+            search: `?keyword=${searchKey}`,
+        });
     };
 
     const search = async (searchKey) => {
@@ -85,11 +82,12 @@ function SearchBox(props) {
                 searchHistory.push(searchKey.trim());
             }
             localStorage.setItem('search-history', JSON.stringify(searchHistory));
-        }
-        const resultSearch = await productService.searching({ keyword: searchKey }, params);
-        if (resultSearch.status === 200) {
-            dispatch(searching({ keyword: searchKey, resultSearchProduct: resultSearch.data.data }));
-            goPageSearch(searchKey);
+
+            const resultSearch = await productService.searching({ keyword: searchKey }, params);
+            if (resultSearch.status === 200) {
+                dispatch(searching({ keyword: searchKey, resultSearchProduct: resultSearch.data.data }));
+                goPageSearch(searchKey);
+            }
         }
     };
 
@@ -153,7 +151,6 @@ function SearchBox(props) {
                                         onClick={() => {
                                             searchHistoryRef.current.style.display = 'none';
                                             search(item);
-                                            // goToPosts();
                                         }}
                                         className={cx('header__search-history-item')}
                                     >

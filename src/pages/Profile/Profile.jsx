@@ -11,6 +11,7 @@ import * as authService from '~/services/authService';
 import * as fileService from '~/services/fileService';
 import { update } from '~/slices/authSlice';
 import { toastError, toastSuccess, toastWarning } from '~/assets/js/toast-message';
+import ModalPopup from '~/components/ModalPopup';
 
 const cx = classnames.bind(styles);
 function Profile() {

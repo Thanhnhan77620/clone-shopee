@@ -76,28 +76,40 @@
     color: var(--primary-color);
 }
 
-.profile-item__header:hover ~ .profile-item__body {
-    display: flex;
-    height: auto;
-}
-
 .profile-item__body {
     display: flex;
     flex-direction: column;
     margin-left: 35px;
     transform-origin: center top;
-    animation: headerNotifyGrowth ease-in 0.2s;
+    animation: growDown 300ms ease-in-out forwards; //headerNotifyGrowth ease-in 0.2s;
+    display: none;
 }
-@keyframes headerNotifyGrowth {
-    from {
-        opacity: 0;
-        transform: scale(0);
+@keyframes growDown {
+    0% {
+        transform: scaleY(0);
     }
-    to {
-        opacity: 1;
-        transform: scale(1);
+    80% {
+        transform: scaleY(1.1);
+    }
+    100% {
+        transform: scaleY(1);
     }
 }
+
+.checkbox-dropdown:checked ~ .profile-item__body {
+    display: flex;
+}
+
+// @keyframes headerNotifyGrowth {
+//     from {
+//         opacity: 0;
+//         transform: scale(0);
+//     }
+//     to {
+//         opacity: 1;
+//         transform: scale(1);
+//     }
+// }
 .profile-item__body-link {
     font-size: 1.4rem;
     line-height: 1.6rem;
@@ -114,6 +126,6 @@
     color: var(--primary-color);
 }
 
-.profile-item__body-link:active {
-    color: var(--primary-color);
-}
+// .profile-item__body-link:active {
+//     color: var(--primary-color);
+// }

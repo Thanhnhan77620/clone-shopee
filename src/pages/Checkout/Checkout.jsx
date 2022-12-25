@@ -12,6 +12,7 @@ import * as paymentService from '~/services/paymentService';
 
 //style
 import style from './Checkout.model.scss';
+import { toastError, toastInfo } from '~/assets/js/toast-message';
 const cx = classsname.bind(style);
 
 function Checkout() {
@@ -39,7 +40,7 @@ function Checkout() {
         const body = {
             totalAmount: sum(),
             products: [],
-            address: 15,
+            address: 1,
             note: 'note',
         };
         cartForPayments.forEach((item) => {
@@ -65,6 +66,8 @@ function Checkout() {
         Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
             if (res.status === 201) {
                 window.open(res.data);
+            } else {
+                toastError(res.errors.message);
             }
         });
     };
@@ -156,7 +159,7 @@ function Checkout() {
                             normal
                             border
                             className={cx('group-color-list__item', 'active')}
-                        // onClick={() => handleSelectModel(item.name, model)}
+                            // onClick={() => handleSelectModel(item.name, model)}
                         >
                             Ví MoMo
                             <div className={cx('group-color-list__item--tick')}>
@@ -167,7 +170,7 @@ function Checkout() {
                             normal
                             border
                             className={cx('group-color-list__item')}
-                        // onClick={() => handleSelectModel(item.name, model)}
+                            // onClick={() => handleSelectModel(item.name, model)}
                         >
                             Thanh toán khi nhận Hàng
                             {/* <div className={cx('group-color-list__item--tick')}>

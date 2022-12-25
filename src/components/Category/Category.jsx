@@ -14,6 +14,8 @@ function Category({ data = [] }) {
             <Slider
                 CarouselHeaderComponent={CategoryHeader}
                 listItem={data}
+                step={3}
+                defaultInfiniteItems={10}
                 CarouselItemComponent={CategoryItem}
                 cssCarouselItem={cxCategoryItem('carousel__item')}
                 infiniteLoop={true}

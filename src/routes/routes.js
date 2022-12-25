@@ -15,6 +15,7 @@ import {
     ConfirmEmail,
     CategoryDetail,
     Checkout,
+    Purchase
 } from '~/pages';
 
 export const publicRoutes = [
@@ -37,4 +38,5 @@ export const privateRoutes = [
     { path: config.routes.user.password, component: Password, layout: UserLayout },
     { path: config.routes.user.email, component: Email, layout: UserLayout },
     { path: config.routes.user.phone, component: Phone, layout: UserLayout },
+    { path: config.routes.user.purchase, component: Purchase, layout: UserLayout },
 ];
