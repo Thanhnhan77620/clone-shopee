@@ -52,7 +52,7 @@ function CreateAddress({ handleClose, fetchData }) {
                     <div className={cx('form-label', 'form-label-custom')}>Số điện thoại</div>
                     <div className={cx('form-content')}>
                         <div className={cx('form-input')}>
-                            <input ref={inputPhone} type="text" className={cx('form-control')} />
+                            <input ref={inputPhone} type="text" pattern="[0-9]+" className={cx('form-control')} />
                         </div>
                     </div>
                 </div>

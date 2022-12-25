@@ -165,7 +165,7 @@
                                 background-color: var(--white-color);
 
                                 .headless-tippy-container {
-                                    width: 350px;
+                                    width: 330px;
                                     padding: 20px 25px;
                                     .headless-tippy_content {
                                         .group-color-swapper {
@@ -229,7 +229,7 @@
                                     }
                                     .headless-tippy_footer {
                                         display: flex;
-                                        justify-content: space-around;
+                                        justify-content: space-between;
                                     }
                                 }
                             }

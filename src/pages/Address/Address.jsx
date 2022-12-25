@@ -2,45 +2,23 @@
 import classnames from 'classnames/bind';
 import { FontAwesomeIcon } from '@fortawesome/react-fontawesome';
 import { faPlus } from '@fortawesome/free-solid-svg-icons';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 
 //custom component
 import Button from '~/components/Button';
 import CreateAddress from './Form/CreateAddress';
 import Popup from '~/components/Popup';
+import { toastError } from '~/assets/js/toast-message';
+import EditAddress from './Form/EditAddress';
 
 //service
 import * as addressService from '~/services/addressService';
 
 //style
 import styles from './Address.module.scss';
-import { toastError } from '~/assets/js/toast-message';
-import { useEffect } from 'react';
-import EditAddress from './Form/EditAddress';
 const cx = classnames.bind(styles);
 
 function Address() {
-    // const addresses = [
-    //     {
-    //         fullName: 'Nguyễn Tấn Quốc Khánh',
-    //         phone: '363677492',
-    //         location: 'Số 1, ấp 1 Xã Núi Tượng, Huyện Tân Phú, Đồng Nai',
-    //         isDefault: 1,
-    //     },
-    //     {
-    //         fullName: 'Nguyễn Thanh Nhàn',
-    //         phone: '363677493',
-    //         location: 'Số 2, ấp 2 Xã Phú Lập, Huyện Tân Phú, Đồng Nai',
-    //         isDefault: 0,
-    //     },
-    //     {
-    //         fullName: 'Nguyễn Thanh Nhẫn',
-    //         phone: '363677494',
-    //         location: 'Số 4, ấp 4 Xã Phú An, Huyện Tân Phú, Đồng Nai',
-    //         isDefault: 0,
-    //     },
-    // ];
-
     const [addresses, setAddresses] = useState([]);
     const [addressSelected, setAddressSelected] = useState();
     const [showFormCreate, setShowFormCreate] = useState(false);

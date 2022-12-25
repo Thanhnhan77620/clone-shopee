@@ -29,6 +29,12 @@
     line-height: 1.6rem;
     font-weight: 400;
     color: var(--text-color);
+
+    input:invalid {
+        border: 1px solid var(--primary-color);
+        background-color: var(--background-color-hover-light-primary);
+        box-shadow: 0 0 4px rgb(0 0 0 / 14%);
+    }
 }
 
 .form-control {

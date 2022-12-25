@@ -31,41 +31,42 @@ function Cart() {
     const [cartSelected, setCartSelected] = useState([]);
     const [toggleIndex, setToggleIndex] = useState(-1);
     const [checkAll, setCheckAll] = useState(false);
-
+    const navigate = useNavigate();
     const widths = ['5%', '45%', '10%', '20%', '10%', '10%'];
 
     const handleDeleteCart = async (type = 'all', item = {}) => {
         let body = {};
         const products = [];
-        if (cartSelected.length) {
-            if (type === 'all') {
-                carts.forEach((item) => {
-                    if (cartSelected.findIndex((a) => a === item.id) > -1) {
-                        const { id, tierModel } = item.product;
-                        const product = { productId: id, tierModels: [] };
-                        tierModel.forEach((element) => {
-                            product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
-                        });
-                        products.push(product);
-                    }
-                });
-                if (products.length) {
-                    body = { products };
-                }
-            } else {
-                if (Object.keys(item).length) {
+
+        if (type === 'all') {
+            carts.forEach((item) => {
+                if (cartSelected.findIndex((a) => a === item.id) > -1) {
                     const { id, tierModel } = item.product;
                     const product = { productId: id, tierModels: [] };
                     tierModel.forEach((element) => {
                         product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
                     });
                     products.push(product);
-                    if (products.length) {
-                        body = { products };
-                    }
+                }
+            });
+            if (products.length) {
+                body = { products };
+            }
+        } else {
+            if (Object.keys(item).length) {
+                const { id, tierModel } = item.product;
+                const product = { productId: id, tierModels: [] };
+                tierModel.forEach((element) => {
+                    product.tierModels.push({ id: element.id, modelId: element.currentModel.id });
+                });
+                products.push(product);
+                if (products.length) {
+                    body = { products };
                 }
             }
+        }
 
+        if (products.length) {
             const req = await cartService.remove(body);
             if (req.status === 201) {
                 if (type === 'all') {
@@ -82,8 +83,6 @@ function Cart() {
             toastWarning('Select Item!');
         }
     };
-
-    const navigate = useNavigate();
 
     const goToCheckout = () => {
         if (cartSelected.length) {
@@ -161,7 +160,9 @@ function Cart() {
         }, 0);
     };
 
-    console.log(cartSelected);
+    const verifyActive = (modelId, currentModelId) => {
+        return modelId === currentModelId;
+    };
 
     return (
         <div className={cx('cart-container')}>
@@ -258,53 +259,77 @@ function Cart() {
                                                             >
                                                                 <div className={cx('headless-tippy-container')}>
                                                                     <div className={cx('headless-tippy_content')}>
-                                                                        <div className={cx('group-color-swapper')}>
-                                                                            <label className={cx('group-color-label')}>
-                                                                                Màu Sắc
-                                                                            </label>
-                                                                            <div className={cx('group-color-list')}>
-                                                                                <Button
-                                                                                    normal
-                                                                                    border
+                                                                        {item.product.tierModel.map(
+                                                                            (tierModel, index) => (
+                                                                                <div
+                                                                                    key={index}
                                                                                     className={cx(
-                                                                                        'group-color-list__item',
-                                                                                        'active',
+                                                                                        'group-color-swapper',
                                                                                     )}
                                                                                 >
-                                                                                    Bạc (N3 Ver 1)
-                                                                                    <div
+                                                                                    <label
                                                                                         className={cx(
-                                                                                            'group-color-list__item--tick',
+                                                                                            'group-color-label',
                                                                                         )}
                                                                                     >
-                                                                                        <FontAwesomeIcon
-                                                                                            icon={faCheck}
-                                                                                            className={cx(
-                                                                                                'group-color-list__item-icon',
-                                                                                            )}
-                                                                                        />
+                                                                                        {tierModel.name}
+                                                                                    </label>
+                                                                                    <div
+                                                                                        className={cx(
+                                                                                            'group-color-list',
+                                                                                        )}
+                                                                                    >
+                                                                                        {tierModel.models.map(
+                                                                                            (model, index) =>
+                                                                                                verifyActive(
+                                                                                                    model.id,
+                                                                                                    tierModel
+                                                                                                        .currentModel
+                                                                                                        .id,
+                                                                                                ) ? (
+                                                                                                    <Button
+                                                                                                        key={index}
+                                                                                                        normal
+                                                                                                        border
+                                                                                                        className={cx(
+                                                                                                            'group-color-list__item',
+                                                                                                            'active',
+                                                                                                        )}
+                                                                                                    >
+                                                                                                        {model.name}
+
+                                                                                                        <div
+                                                                                                            className={cx(
+                                                                                                                'group-color-list__item--tick',
+                                                                                                            )}
+                                                                                                        >
+                                                                                                            <FontAwesomeIcon
+                                                                                                                icon={
+                                                                                                                    faCheck
+                                                                                                                }
+                                                                                                                className={cx(
+                                                                                                                    'group-color-list__item-icon',
+                                                                                                                )}
+                                                                                                            />
+                                                                                                        </div>
+                                                                                                    </Button>
+                                                                                                ) : (
+                                                                                                    <Button
+                                                                                                        key={index}
+                                                                                                        normal
+                                                                                                        border
+                                                                                                        className={cx(
+                                                                                                            'group-color-list__item',
+                                                                                                        )}
+                                                                                                    >
+                                                                                                        {model.name}
+                                                                                                    </Button>
+                                                                                                ),
+                                                                                        )}
                                                                                     </div>
-                                                                                </Button>
-                                                                                <Button
-                                                                                    normal
-                                                                                    border
-                                                                                    className={cx(
-                                                                                        'group-color-list__item',
-                                                                                    )}
-                                                                                >
-                                                                                    Bạc (N3 Ver 1) Bạc (N3 Ver 1)
-                                                                                </Button>
-                                                                                <Button
-                                                                                    normal
-                                                                                    border
-                                                                                    className={cx(
-                                                                                        'group-color-list__item',
-                                                                                    )}
-                                                                                >
-                                                                                    Bạc (N3 Ver 1)
-                                                                                </Button>
-                                                                            </div>
-                                                                        </div>
+                                                                                </div>
+                                                                            ),
+                                                                        )}
                                                                     </div>
                                                                     <div className={cx('headless-tippy_footer')}>
                                                                         <Button

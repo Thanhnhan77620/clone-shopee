@@ -61,6 +61,7 @@ function EditAddress({ handleClose, item, fetchData }) {
                             <input
                                 ref={inputPhone}
                                 type="text"
+                                pattern="[0-9]+"
                                 className={cx('form-control')}
                                 defaultValue={item.phoneNumber}
                             />

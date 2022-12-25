@@ -9,10 +9,13 @@ import images from '~/assets/images';
 
 //style
 import style from './Purchase.module.scss';
+import { useSelector } from 'react-redux';
 const cx = classnames.bind(style);
 
 function Purchase(prps) {
     const arr = [1, 2, 3, 4];
+    const { orders } = useSelector((state) => state.order);
+    console.log(orders);
     return (
         <div>
             {/* header */}
@@ -34,7 +37,7 @@ function Purchase(prps) {
                 </div>
             </div>
 
-            {false ? (
+            {orders.length > 0 ? (
                 <>
                     {/* search */}
                     <div className={cx('search-swap')}>
@@ -43,7 +46,7 @@ function Purchase(prps) {
                     </div>
 
                     {/* cart item */}
-                    {arr.map((item, index) => (
+                    {orders.map((order, index) => (
                         <div className={cx('item-top-container')} key={index}>
                             <div className={cx('cart', 'item-top-swap')}>
                                 <div className={cx('top-header')}>

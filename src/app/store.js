@@ -4,6 +4,7 @@ import cartReducer from "~/slices/cartSlice"
 import cateReducer from "~/slices/categorySlice"
 import brandReducer from "~/slices/brandSlice"
 import productReducer from "~/slices/productSlice"
+import orderReducer from "~/slices/orderSlice"
 
 const rootReducer = {
     auth: authReducer,
@@ -11,6 +12,7 @@ const rootReducer = {
     category: cateReducer,
     brand: brandReducer,
     product: productReducer,
+    order: orderReducer,
 }
 
 const store = configureStore({

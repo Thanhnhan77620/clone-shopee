@@ -16,12 +16,14 @@ import { login } from '~/slices/authSlice';
 import { getAllCart } from '~/slices/cartSlice';
 import { getAllCate } from '~/slices/categorySlice';
 import { getAllBrand } from '~/slices/brandSlice';
+import { getAllOrder } from '~/slices/orderSlice';
 
 //service
 import * as authService from '~/services/authService';
 import * as cartService from '~/services/cartService';
 import * as categoryService from '~/services/categoryService';
 import * as brandService from '~/services/brandService';
+import * as orderService from '~/services/orderService';
 
 const cx = classnames.bind(styles);
 function FormLogin() {
@@ -65,6 +67,14 @@ function FormLogin() {
                 Promise.resolve(brandService.getAll()).then((e) => {
                     if (e.status === 200) {
                         dispatch(getAllBrand(e.data.data));
+                    } else {
+                        toastError(e.errors.message);
+                    }
+                });
+
+                Promise.resolve(orderService.getAll()).then((e) => {
+                    if (e.status === 200) {
+                        dispatch(getAllOrder(e.data.data));
                     } else {
                         toastError(e.errors.message);
                     }
