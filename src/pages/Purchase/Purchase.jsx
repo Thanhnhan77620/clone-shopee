@@ -10,13 +10,14 @@ import Button from '~/components/Button';
 import images from '~/assets/images';
 import { PENDING, CANCEL, DELIVERING, SUCCESSFUL } from '~/commons';
 import { toastError } from '~/assets/js/toast-message';
+import Popup from '~/components/Popup';
+import FormComment from '~/components/Form/FormComment';
 
 //service
 import * as orderService from '~/services/orderService';
 
 //style
 import style from './Purchase.module.scss';
-
 const cx = classnames.bind(style);
 
 function Purchase() {
@@ -24,6 +25,7 @@ function Purchase() {
     const [orders, setOrders] = useState([]);
     const [filter, setFilter] = useState('');
     const [ordersFiltered, setOrdersFiltered] = useState([]);
+    const [showPopup, setShowPopup] = useState(false);
 
     const getAllOrder = async () => {
         const req = await orderService.getAll();
@@ -144,6 +146,14 @@ function Purchase() {
                                             </Button>
                                         )}
 
+                                        <Button
+                                            primary
+                                            className={cx('bottom-control-group_btnRebuy')}
+                                            onClick={() => setShowPopup(true)}
+                                        >
+                                            Đánh giá
+                                        </Button>
+
                                         {order.status === PENDING && (
                                             <Button primary className={cx('bottom-control-group_btnRebuy')}>
                                                 Hủy đơn hàng
@@ -162,6 +172,7 @@ function Purchase() {
                     <div className={cx('cart-empty-swap_text')}>Chưa có đơn hàng</div>
                 </div>
             )}
+            <Popup FormComponent={<FormComment handleClose={() => setShowPopup(false)} />} isShow={showPopup} />
         </div>
     );
 }
