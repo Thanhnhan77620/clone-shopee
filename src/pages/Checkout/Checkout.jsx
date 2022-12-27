@@ -90,7 +90,7 @@ function Checkout() {
             if (paymentType === PAYMENT_BY_MOMO) {
                 Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
                     console.log(res);
-                    if (res.status === 201) {
+                    if (res.status === 201 || res.status === 200) {
                         window.open(res.data);
                     } else {
                         toastError(res.errors.message);
