@@ -8,7 +8,7 @@ import { useState, useEffect } from 'react';
 
 //custom component
 import Button from '~/components/Button';
-import { toastError } from '~/assets/js/toast-message';
+import { toastError, toastWarning } from '~/assets/js/toast-message';
 import Popup from '~/components/Popup';
 import { ListAddress } from '~/components/Form/FormAddress';
 import { PAYMENT_BY_MOMO, PAYMENT_BY_CASH } from '~/commons';
@@ -56,56 +56,59 @@ function Checkout() {
     };
 
     const payment = () => {
-        const body = {
-            totalAmount: sum(),
-            products: [],
-            address: addressDefault.id,
-            note: 'note',
-        };
-        cartForPayments.forEach((item) => {
-            const { id, name, imagePath, discount, priceBeforeDiscount, quantity, tierModel } = item.product;
-            const product = {
-                productId: id,
-                name,
-                imagePath,
-                discount,
-                priceBeforeDiscount,
-                quantity,
-                tierModels: [],
+        if (addressDefault) {
+            const body = {
+                totalAmount: sum(),
+                products: [],
+                address: addressDefault.id,
             };
-
-            tierModel.forEach((item) => {
-                const tierModel = {
-                    tierModelId: item.id,
-                    tierModelName: item.name,
-                    modelId: item.currentModel.id,
-                    modelName: item.currentModel.name,
+            cartForPayments.forEach((item) => {
+                const { id, name, imagePath, discount, priceBeforeDiscount, quantity, tierModel } = item.product;
+                const product = {
+                    productId: id,
+                    name,
+                    imagePath,
+                    discount,
+                    priceBeforeDiscount,
+                    quantity,
+                    tierModels: [],
                 };
-                product.tierModels.push(tierModel);
+
+                tierModel.forEach((item) => {
+                    const tierModel = {
+                        tierModelId: item.id,
+                        tierModelName: item.name,
+                        modelId: item.currentModel.id,
+                        modelName: item.currentModel.name,
+                    };
+                    product.tierModels.push(tierModel);
+                });
+
+                body.products.push(product);
             });
 
-            body.products.push(product);
-        });
-
-        if (paymentType === PAYMENT_BY_MOMO) {
-            Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
-                console.log(res);
-                if (res.status === 201) {
-                    window.open(res.data);
-                } else {
-                    toastError(res.errors.message);
-                }
-            });
+            if (paymentType === PAYMENT_BY_MOMO) {
+                Promise.resolve(paymentService.paymentByMomo(body)).then((res) => {
+                    console.log(res);
+                    if (res.status === 201) {
+                        window.open(res.data);
+                    } else {
+                        toastError(res.errors.message);
+                    }
+                });
+            } else {
+                Promise.resolve(paymentService.paymentByCash(body)).then((res) => {
+                    if (res.status === 201) {
+                        navigate({
+                            pathname: '/user/purchase',
+                        });
+                    } else {
+                        toastError(res.errors.message);
+                    }
+                });
+            }
         } else {
-            Promise.resolve(paymentService.paymentByCash(body)).then((res) => {
-                if (res.status === 201) {
-                    navigate({
-                        pathname: '/user/purchase',
-                    });
-                } else {
-                    toastError(res.errors.message);
-                }
-            });
+            toastWarning('Vui lòng chọn địa chỉ nhận hàng!');
         }
     };
 
