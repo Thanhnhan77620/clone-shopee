@@ -46,6 +46,7 @@ function ProductDetail(props) {
     const [modelCart, setModelCart] = useState({});
     const [tierModelsParent, setTierModelsParent] = useState({});
     const [tierModelsChild, setTierModelsChild] = useState({});
+    const [topSold, setTopSold] = useState([]);
     const videoEl = useRef(null);
 
     const isParams = () => {
@@ -187,6 +188,19 @@ function ProductDetail(props) {
                 }
 
                 setModelCart({ product, tierModel });
+
+                getTopSold(req.data.categories.id);
+            }
+        };
+
+        const getTopSold = async (categoriesId) => {
+            const params = {
+                page: 1,
+                limit: 10,
+            };
+            const req = await productService.topSold({ categoriesId }, params);
+            if (req.status === 200 || req.status === 201) {
+                setTopSold(req.data.data);
             }
         };
 
@@ -424,9 +438,9 @@ function ProductDetail(props) {
                                 <div className={cx('card-layout-header')}>Top Sản Phẩm Bán Chạy</div>
                                 <div className={cx('card-layout-content')}>
                                     <div className={cx('card-layout-content__item-swapper')}>
-                                        {/* {items.map((item) => (
+                                        {topSold.map((item) => (
                                             <ProductItem key={item.id} item={item} />
-                                        ))} */}
+                                        ))}
                                     </div>
                                 </div>
                             </div>

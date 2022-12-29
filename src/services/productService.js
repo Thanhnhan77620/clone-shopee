@@ -21,6 +21,14 @@ export const topSearch = async () => {
     return res;
 };
 
+export const topSold = async (body = {}, params = {}) => {
+    const configHeader = {
+        params
+    }
+    const res = await httpRequest.post('products/top-sold', body, configHeader);
+    return res;
+};
+
 export const getProductById = async (id) => {
     const res = await httpRequest.get('products/' + id);
     return res;

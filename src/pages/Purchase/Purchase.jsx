@@ -90,8 +90,6 @@ function Purchase() {
         getAllOrder();
     }, []);
 
-    console.log(orders);
-
     return (
         <div>
             {/* header */}
@@ -176,14 +174,6 @@ function Purchase() {
                                             </Button>
                                         )}
 
-                                        <Button
-                                            primary
-                                            className={cx('bottom-control-group_btnRebuy')}
-                                            onClick={() => handleShowPopupComment(order)}
-                                        >
-                                            Đánh giá
-                                        </Button>
-
                                         {order.status === PENDING && (
                                             <Button
                                                 primary
@@ -193,7 +183,7 @@ function Purchase() {
                                                 Hủy đơn hàng
                                             </Button>
                                         )}
-                                        <Button primary>Mua lại</Button>
+                                        {/* <Button primary>Mua lại</Button> */}
                                     </div>
                                 </div>
                             </div>
