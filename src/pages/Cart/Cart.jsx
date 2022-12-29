@@ -21,6 +21,7 @@ import { getAllCart, remove } from '~/slices/cartSlice';
 import style from './Cart.module.scss';
 import { toastError, toastSuccess, toastWarning } from '~/assets/js/toast-message';
 import { useEffect } from 'react';
+import { formatMoney } from '~/utils';
 
 const cx = classnames.bind(style);
 
@@ -154,17 +155,23 @@ function Cart() {
     };
 
     const sum = () => {
-        return carts.reduce(function (acc, cur) {
+        const result = carts.reduce(function (acc, cur) {
             if (cartSelected.findIndex((a) => a === cur.id) > -1) {
                 return acc + cur.product.price * cur.product.quantity;
             }
             return acc;
         }, 0);
+        return formatMoney(result);
     };
 
     const verifyActive = (modelId, currentModelId) => {
         return modelId === currentModelId;
     };
+
+    useEffect(() => {
+        dispatchActionGetAll();
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
 
     return (
         <div className={cx('cart-container')}>
@@ -369,9 +376,11 @@ function Cart() {
 
                                         <div className={cx('item-price')} style={{ width: widths[2] }}>
                                             <span className={cx('item-price_old')}>
-                                                {item.product.priceBeforeDiscount}
+                                                {formatMoney(item.product.priceBeforeDiscount)}
                                             </span>
-                                            <span className={cx('item-price_new')}>{item.product.price}</span>
+                                            <span className={cx('item-price_new')}>
+                                                {formatMoney(item.product.price)}
+                                            </span>
                                         </div>
 
                                         <div className={cx('group-quantity-swapper')} style={{ width: widths[3] }}>
@@ -413,7 +422,7 @@ function Cart() {
                                         </div>
 
                                         <div className={cx('item-total')} style={{ width: widths[4] }}>
-                                            ₫{item.product.price * item.product.quantity}
+                                            {formatMoney(item.product.price * item.product.quantity)}
                                         </div>
                                         <div className={cx('item-action-group')} style={{ width: widths[5] }}>
                                             <div
@@ -458,7 +467,7 @@ function Cart() {
                         <div className={cx('cart-swap-footer_item')} style={{ width: '25%' }}></div>
                         <div className={cx('cart-swap-footer_item')} style={{ width: '35%', textAlign: 'right' }}>
                             Tổng thanh toán ({cartSelected.length} Sản phẩm):
-                            <span className={cx('cart-swap-footer_item-price')}>₫{sum()}</span>
+                            <span className={cx('cart-swap-footer_item-price')}>{sum()}</span>
                         </div>
                         <div className={cx('cart-swap-footer_item')} style={{ width: '20%', textAlign: 'right' }}>
                             <Button primary large style={{ height: '40px', width: '200px' }} onClick={goToCheckout}>

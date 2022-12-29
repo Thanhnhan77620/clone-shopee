@@ -18,6 +18,7 @@ import * as paymentService from '~/services/paymentService';
 
 //style
 import style from './Checkout.model.scss';
+import { formatMoney } from '~/utils';
 const cx = classsname.bind(style);
 
 function Checkout() {
@@ -50,9 +51,10 @@ function Checkout() {
     };
 
     const sum = () => {
-        return cartForPayments.reduce(function (acc, cur) {
+        const result = cartForPayments.reduce(function (acc, cur) {
             return acc + cur.product.price * cur.product.quantity;
         }, 0);
+        return result;
     };
 
     const payment = () => {
@@ -98,6 +100,8 @@ function Checkout() {
                 });
             } else {
                 Promise.resolve(paymentService.paymentByCash(body)).then((res) => {
+                    console.log(body);
+                    console.log(res);
                     if (res.status === 201) {
                         navigate({
                             pathname: '/user/purchase',
@@ -200,13 +204,13 @@ function Checkout() {
                                 Phân loại hàng: {productClassification(item)}
                             </div>
                             <div className={cx('content-price')} style={{ width: widths[2], textAlign: 'right' }}>
-                                ₫{item.product.price}
+                                {formatMoney(item.product.price)}
                             </div>
                             <div className={cx('content-quantity')} style={{ width: widths[3], textAlign: 'center' }}>
                                 {item.product.quantity}
                             </div>
                             <div className={cx('content-total')} style={{ width: widths[4], textAlign: 'right' }}>
-                                ₫{item.product.price * item.product.quantity}
+                                {formatMoney(item.product.price * item.product.quantity)}
                             </div>
                         </div>
                     ))}
@@ -253,7 +257,7 @@ function Checkout() {
                             Tổng tiền hàng
                         </div>
                         <div className={cx('main-detail_total')} style={{ width: '20%', textAlign: 'right' }}>
-                            ₫{sum()}
+                            {formatMoney(sum())}
                         </div>
                     </div>
                     <div className={cx('main-detail')}>
@@ -262,7 +266,7 @@ function Checkout() {
                             Tổng thanh toán:
                         </div>
                         <div className={cx('main-detail_total', 'final')} style={{ width: '20%', textAlign: 'right' }}>
-                            ₫{sum()}
+                            {formatMoney(sum())}
                         </div>
                     </div>
                 </div>

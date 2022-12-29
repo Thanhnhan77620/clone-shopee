@@ -1,4 +1,4 @@
-import { CHECKBOX_FORM_LOGIN_ID, CHECKBOX_FORM_REGISTER_ID } from '~/commons'
+import { CANCEL, DELIVERING, SUCCESSFUL, PENDING, CHECKBOX_FORM_LOGIN_ID, CHECKBOX_FORM_REGISTER_ID } from '~/commons'
 
 export const obscureString = (string, startIndex, endIndex, char) => {
 
@@ -41,3 +41,18 @@ export const getParentElement = (element, selector) => {
 export const formatMoney = (money) => {
     return new Intl.NumberFormat('vi-VN', { style: 'currency', currency: 'VND' }).format(money);
 }
+
+export const convertStatusOrderCode = (statusOrderCode) => {
+    switch (statusOrderCode) {
+        case CANCEL:
+            return 'đã hủy'
+        case PENDING:
+            return 'chờ duyệt'
+        case DELIVERING:
+            return 'đang giao'
+        default:
+            return 'hoàn thành'
+    }
+}
+
+

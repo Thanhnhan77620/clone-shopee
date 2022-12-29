@@ -12,6 +12,8 @@ import { PENDING, CANCEL, DELIVERING, SUCCESSFUL } from '~/commons';
 import { toastError } from '~/assets/js/toast-message';
 import Popup from '~/components/Popup';
 import FormComment from '~/components/Form/FormComment';
+import FormCancel from '~/components/Form/FormCancel';
+import { convertStatusOrderCode, formatMoney } from '~/utils';
 
 //service
 import * as orderService from '~/services/orderService';
@@ -25,8 +27,10 @@ function Purchase() {
     const [orders, setOrders] = useState([]);
     const [filter, setFilter] = useState('');
     const [ordersFiltered, setOrdersFiltered] = useState([]);
-    const [showPopup, setShowPopup] = useState(false);
+    const [showPopupCmt, setShowPopupCmt] = useState(false);
+    const [showPopupCancel, setShowPopupCancel] = useState(false);
     const [productCmt, setProductCmt] = useState([]);
+    const [order, setOrder] = useState({});
 
     const getAllOrder = async () => {
         const req = await orderService.getAll();
@@ -61,7 +65,20 @@ function Purchase() {
 
     const handleShowPopupComment = (order) => {
         setProductCmt(order.products);
-        setShowPopup(true);
+        setShowPopupCmt(true);
+    };
+
+    const handleShowPopupCancel = (order) => {
+        setOrder(order);
+        setShowPopupCancel(true);
+    };
+
+    const getCancelBy = (params) => {
+        if (params && params.isCancel) {
+            return 'Hủy bởi bạn';
+        } else if (params && params.isCancelByAdmin) {
+            return 'Hủy bởi hệ thống';
+        }
     };
 
     useEffect(() => {
@@ -72,6 +89,8 @@ function Purchase() {
     useEffect(() => {
         getAllOrder();
     }, []);
+
+    console.log(orders);
 
     return (
         <div>
@@ -107,7 +126,7 @@ function Purchase() {
                         <div className={cx('item-top-container')} key={index}>
                             <div className={cx('cart', 'item-top-swap')}>
                                 <div className={cx('top-header')}>
-                                    <span>{order.status}</span>
+                                    <span>{convertStatusOrderCode(order.status)}</span>
                                 </div>
                                 <div className={cx('top-main')}>
                                     {order.products.map((product, index) => (
@@ -127,13 +146,15 @@ function Purchase() {
                                                 {product.discount > 0 ? (
                                                     <>
                                                         <div className={cx('item-price_old')}>
-                                                            đ{product.priceBeforeDiscount}
+                                                            {formatMoney(product.priceBeforeDiscount)}
                                                         </div>
-                                                        <div className={cx('item-price_new')}>đ{product.price}</div>
+                                                        <div className={cx('item-price_new')}>
+                                                            {formatMoney(product.price)}
+                                                        </div>
                                                     </>
                                                 ) : (
                                                     <div className={cx('item-price_new')}>
-                                                        đ{product.priceBeforeDiscount}
+                                                        {formatMoney(product.priceBeforeDiscount)}
                                                     </div>
                                                 )}
                                             </div>
@@ -144,10 +165,10 @@ function Purchase() {
                             <div className={cx('cart', 'item-bottom-swap')}>
                                 <div className={cx('bottom-header')}>
                                     <div className={cx('bottom-header_label')}>Thành tiền:</div>
-                                    <div className={cx('bottom-header_total')}>đ{order.totalAmount}</div>
+                                    <div className={cx('bottom-header_total')}>{formatMoney(order.totalAmount)}</div>
                                 </div>
                                 <div className={cx('bottom-main')}>
-                                    <div className={cx('bottom-control-status')}>Đã hủy bởi bạn</div>
+                                    <div className={cx('bottom-control-status')}>{getCancelBy(order.params)}</div>
                                     <div className={cx('bottom-control-group')}>
                                         {order.status === SUCCESSFUL && (
                                             <Button primary className={cx('bottom-control-group_btnRebuy')}>
@@ -164,7 +185,11 @@ function Purchase() {
                                         </Button>
 
                                         {order.status === PENDING && (
-                                            <Button primary className={cx('bottom-control-group_btnRebuy')}>
+                                            <Button
+                                                primary
+                                                className={cx('bottom-control-group_btnRebuy')}
+                                                onClick={() => handleShowPopupCancel(order)}
+                                            >
                                                 Hủy đơn hàng
                                             </Button>
                                         )}
@@ -182,8 +207,14 @@ function Purchase() {
                 </div>
             )}
             <Popup
-                FormComponent={<FormComment handleClose={() => setShowPopup(false)} products={productCmt} />}
-                isShow={showPopup}
+                FormComponent={<FormComment handleClose={() => setShowPopupCmt(false)} products={productCmt} />}
+                isShow={showPopupCmt}
+            />
+            <Popup
+                FormComponent={
+                    <FormCancel handleClose={() => setShowPopupCancel(false)} order={order} fetchData={getAllOrder} />
+                }
+                isShow={showPopupCancel}
             />
         </div>
     );
