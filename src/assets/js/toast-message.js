@@ -56,7 +56,7 @@ export function toastSuccess(message = '') {
         title: 'Success',
         message,
         type: 'success',
-        duration: 2000,
+        duration: 1000,
     })
 }
 
@@ -66,7 +66,7 @@ export function toastInfo(message = '') {
         title: 'Info',
         message,
         type: 'info',
-        duration: 2000,
+        duration: 1000,
     })
 }
 
@@ -76,7 +76,7 @@ export function toastWarning(message = '') {
         title: 'Warning',
         message,
         type: 'warning',
-        duration: 2000,
+        duration: 1000,
     })
 }
 
@@ -86,7 +86,7 @@ export function toastError(message = '') {
         title: 'error',
         message,
         type: 'error',
-        duration: 2000,
+        duration: 1000,
     })
 }
 

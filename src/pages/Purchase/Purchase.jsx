@@ -26,6 +26,7 @@ function Purchase() {
     const [filter, setFilter] = useState('');
     const [ordersFiltered, setOrdersFiltered] = useState([]);
     const [showPopup, setShowPopup] = useState(false);
+    const [productCmt, setProductCmt] = useState([]);
 
     const getAllOrder = async () => {
         const req = await orderService.getAll();
@@ -56,6 +57,11 @@ function Purchase() {
             tierModelString.push(model.modelName);
         });
         return tierModelString.join(', ');
+    };
+
+    const handleShowPopupComment = (order) => {
+        setProductCmt(order.products);
+        setShowPopup(true);
     };
 
     useEffect(() => {
@@ -152,7 +158,7 @@ function Purchase() {
                                         <Button
                                             primary
                                             className={cx('bottom-control-group_btnRebuy')}
-                                            onClick={() => setShowPopup(true)}
+                                            onClick={() => handleShowPopupComment(order)}
                                         >
                                             Đánh giá
                                         </Button>
@@ -175,7 +181,10 @@ function Purchase() {
                     <div className={cx('cart-empty-swap_text')}>Chưa có đơn hàng</div>
                 </div>
             )}
-            <Popup FormComponent={<FormComment handleClose={() => setShowPopup(false)} />} isShow={showPopup} />
+            <Popup
+                FormComponent={<FormComment handleClose={() => setShowPopup(false)} products={productCmt} />}
+                isShow={showPopup}
+            />
         </div>
     );
 }

@@ -6,22 +6,62 @@ import classnames from 'classnames/bind';
 import styles from './RatingStar.module.scss';
 
 const cx = classnames.bind(styles);
-function RatingStar({ size = 14, score = 0, colorEmpty = '', colorFill = 'yellow' }) {
+function RatingStar({ size = 14, score = 0, colorEmpty = '#3c3c3cad', colorFill = 'yellow', onClick }) {
     return (
         <div className={cx('star-list')}>
             <div className={cx('star')}>
-                <FontAwesomeIcon icon={faStar} style={{ color: colorEmpty, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorEmpty, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorEmpty, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorEmpty, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorEmpty, width: size, height: size }} />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorEmpty, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(1)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorEmpty, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(2)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorEmpty, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(3)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorEmpty, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(4)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorEmpty, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(5)}
+                />
             </div>
             <div className={cx('star', 'star--fill')} style={{ width: `${score * size}px` }}>
-                <FontAwesomeIcon icon={faStar} style={{ color: colorFill, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorFill, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorFill, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorFill, width: size, height: size }} />
-                <FontAwesomeIcon icon={faStar} style={{ color: colorFill, width: size, height: size }} />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorFill, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(1)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorFill, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(2)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorFill, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(3)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorFill, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(4)}
+                />
+                <FontAwesomeIcon
+                    icon={faStar}
+                    style={{ color: colorFill, width: size, height: size, cursor: 'pointer' }}
+                    onClick={() => onClick(5)}
+                />
             </div>
         </div>
     );

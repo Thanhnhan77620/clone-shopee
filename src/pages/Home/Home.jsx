@@ -87,7 +87,7 @@ function Home() {
                     });
                 })
                 .catch((error) => {
-                    alert('error load banner', error);
+                    console.log(error);
                 });
         };
 
