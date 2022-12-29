@@ -14,6 +14,7 @@ import toast from '~/assets/js/toast-message';
 //services
 import * as bannerService from '~/services/bannerService';
 import * as categoryService from '~/services/categoryService';
+import * as productService from '~/services/productService';
 
 //style
 import styles from './Home.module.scss';
@@ -35,6 +36,7 @@ function Home() {
     const [mainBanners, setMainBanners] = useState([]);
     const [listHorizontal, setListHorizontal] = useState([]);
     const [categories, setCategories] = useState([]);
+    const [topSearch, setTopSearch] = useState([]);
 
     useEffect(() => {
         const icons = {
@@ -102,8 +104,19 @@ function Home() {
             }
             setCategories(data);
         };
+
+        //top-search
+        const getTopSearch = async () => {
+            const repCate = await productService.topSearch();
+            console.log(repCate);
+            if (repCate.status === 200) {
+                setTopSearch(repCate.data.data);
+            }
+        };
+
         getCate();
         getBanner();
+        getTopSearch();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, []);
 
@@ -120,9 +133,9 @@ function Home() {
                     <Banner type="horizontal" data={listHorizontal} />
                     <Brand listBanner={listHorizontal} />
                     <div className={cx('section-suggest')}>
-                        <div className={cx('section-suggest-header')}>
+                        {/* <div className={cx('section-suggest-header')}>
                             <div className={cx('section-suggest-header__title')}>gợi ý hôm nay</div>
-                        </div>
+                        </div> */}
                         <div className={cx('section-suggest-body')}>
                             <div className="grid__row">
                                 {data.map((item) => (
@@ -133,7 +146,7 @@ function Home() {
                             </div>
                         </div>
                     </div>
-                    <TopSearch data={data} />
+                    <TopSearch data={topSearch} />
                 </div>
             </div>
         </>

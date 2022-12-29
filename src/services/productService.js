@@ -16,6 +16,11 @@ export const searching = async (body = {}, params = {}) => {
     return res;
 };
 
+export const topSearch = async () => {
+    const res = await httpRequest.get('products/top-search');
+    return res;
+};
+
 export const getProductById = async (id) => {
     const res = await httpRequest.get('products/' + id);
     return res;
