@@ -90,11 +90,6 @@ function ProductDetail(props) {
     };
 
     const handleSelectModel = (key, model) => {
-
-        
-
-
-
         setModelCart((preState) => {
             const indexTierModel = preState.tierModel.findIndex((item) => item.name === key);
             const tierModel = preState.tierModel[indexTierModel];
@@ -157,7 +152,7 @@ function ProductDetail(props) {
         attemptPlay();
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
-
+    console.log(modelCart);
     return (
         <div className="app__container">
             <div className="grid app__content">
@@ -225,6 +220,7 @@ function ProductDetail(props) {
                                     <div className={cx('group-color-list')}>
                                         {item.models.map((model, index) => (
                                             <Button
+                                                disabled={model.parent === modelCart.name}
                                                 key={index}
                                                 normal
                                                 border
@@ -249,72 +245,78 @@ function ProductDetail(props) {
                                 </div>
                             ))} */}
 
-                        {Object.keys(productDetail).length && Object.keys(productDetail.tierModels).length && (
-                            <>
-                                <div className={cx('group-color-swapper')}>
-                                    <label className={cx('group-color-label')}>
-                                        {productDetail.tierModels[0].name}
-                                    </label>
-                                    <div className={cx('group-color-list')}>
-                                        {productDetail.tierModels[0].models.map((model, index) => (
-                                            <Button
-                                                key={index}
-                                                normal
-                                                border
-                                                className={cx(
-                                                    'group-color-list__item',
-                                                    checkSelect(productDetail.tierModels[0].name, model.id),
-                                                )}
-                                                onClick={() =>
-                                                    handleSelectModel(productDetail.tierModels[0].name, model)
-                                                }
-                                            >
-                                                {model.name}
-                                                {checkSelect(productDetail.tierModels[0].name, model.id) && (
-                                                    <div className={cx('group-color-list__item--tick')}>
-                                                        <FontAwesomeIcon
-                                                            icon={faCheck}
-                                                            className={cx('group-color-list__item-icon')}
-                                                        />
-                                                    </div>
-                                                )}
-                                            </Button>
-                                        ))}
-                                    </div>
+                        {Object.keys(productDetail).length &&
+                            Object.keys(productDetail.tierModels).length &&
+                            <div className={cx('group-color-swapper')}>
+                                <label className={cx('group-color-label')}>{productDetail.tierModels[0].name}</label>
+                                <div className={cx('group-color-list')}>
+                                    {productDetail.tierModels[0].models.map((model, index) => (
+                                        <Button
+                                            disabled={model.parent === modelCart.name}
+                                            key={index}
+                                            normal
+                                            border
+                                            className={cx(
+                                                'group-color-list__item',
+                                                checkSelect(productDetail.tierModels[0].name, model.id),
+                                            )}
+                                            onClick={() => handleSelectModel(productDetail.tierModels[0].name, model)}
+                                        >
+                                            {model.name}
+                                            {checkSelect(productDetail.tierModels[0].name, model.id) && (
+                                                <div className={cx('group-color-list__item--tick')}>
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        className={cx('group-color-list__item-icon')}
+                                                    />
+                                                </div>
+                                            )}
+                                        </Button>
+                                    ))}
                                 </div>
-                                <div className={cx('group-color-swapper')}>
-                                    <label className={cx('group-color-label')}>
-                                        {productDetail.tierModels[1].name}
-                                    </label>
-                                    <div className={cx('group-color-list')}>
-                                        {/* {productDetail.tierModels[0].models.map((model, index) => (
-                                            <Button
-                                                key={index}
-                                                normal
-                                                border
-                                                className={cx(
-                                                    'group-color-list__item',
-                                                    checkSelect(productDetail.tierModels[0].name, model.id),
-                                                )}
-                                                onClick={() =>
-                                                    handleSelectModel(productDetail.tierModels[0].name, model)
-                                                }
-                                            >
-                                                {model.name}
-                                                {checkSelect(productDetail.tierModels[0].name, model.id) && (
-                                                    <div className={cx('group-color-list__item--tick')}>
-                                                        <FontAwesomeIcon
-                                                            icon={faCheck}
-                                                            className={cx('group-color-list__item-icon')}
-                                                        />
-                                                    </div>
-                                                )}
-                                            </Button>
-                                        ))} */}
-                                    </div>
+                            </div>}
+
+                        {Object.keys(productDetail).length &&
+                            Object.keys(productDetail.tierModels).length &&
+                            <div className={cx('group-color-swapper')}>
+                                <label className={cx('group-color-label')}>{productDetail.tierModels[1].name}</label>
+                                <div className={cx('group-color-list')}>
+                                    {productDetail.tierModels[1].models.map((model, index) => (
+                                        <Button
+                                            disabled={model.parent === modelCart.tierModel[0].currentModel.name}
+                                            key={index}
+                                            normal
+                                            border
+                                            className={cx(
+                                                'group-color-list__item',
+                                                checkSelect(productDetail.tierModels[1].name, model.id),
+                                            )}
+                                            onClick={() => handleSelectModel(productDetail.tierModels[1].name, model)}
+                                        >
+                                            {model.name}
+                                            {/* {checkSelect(productDetail.tierModels[1].name, model.id)&& (
+                                                <div className={cx('group-color-list__item--tick')}>
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        className={cx('group-color-list__item-icon')}
+                                                    />
+                                                </div>
+                                            )} */}
+                                            {model.parent === modelCart.tierModel[0].currentModel.name && (
+                                                <div className={cx('group-color-list__item--tick')}>
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        className={cx('group-color-list__item-icon')}
+                                                    />
+                                                </div>
+                                            )}
+
+                                        </Button>
+                                    ))}
                                 </div>
-                            </>
-                        )}
+                            </div>}
+
+
 
                         <div className={cx('group-quantity-swapper')}>
                             <div className={cx('group-quantity-label')}>Số Lượng</div>

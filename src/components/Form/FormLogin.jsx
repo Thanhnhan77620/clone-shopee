@@ -45,7 +45,7 @@ function FormLogin() {
         //helend2905@gmail.com
         const fetchLoginAPI = async () => {
             const userResponse = await authService.login(userLogin);
-            if (userResponse.status === 200) {
+            if (userResponse.status === 200 || userResponse.status === 201) {
                 toastSuccess('Login Successfully!');
                 dispatch(login(userResponse.data));
                 handleShowPopupOverplay(null, true);
@@ -90,7 +90,8 @@ function FormLogin() {
                     }
                 });
             } else {
-                setError({ ...userResponse.errors });
+                toastError(userResponse.errors.message)
+                //setError({ ...userResponse.errors });
             }
         };
         fetchLoginAPI();
