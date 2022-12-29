@@ -103,14 +103,15 @@
                         flex: 1;
                     }
                     .item-info-group_type {
-                        width: 140px;
+                        width: 170px;
+                        float: left;
                         &:hover {
                             cursor: pointer;
                         }
                         .item-info-group_type-title {
                             display: flex;
                             align-items: center;
-                            justify-content: space-between;
+                            justify-content: flex-start;
                             color: var(--text-light-color);
 
                             .item-info-group_type-btn {

@@ -333,7 +333,7 @@ function Cart() {
                                                                             ),
                                                                         )}
                                                                     </div>
-                                                                    <div className={cx('headless-tippy_footer')}>
+                                                                    {/* <div className={cx('headless-tippy_footer')}>
                                                                         <Button
                                                                             normal
                                                                             style={{ width: '46%' }}
@@ -348,13 +348,13 @@ function Cart() {
                                                                         <Button primary style={{ width: '46%' }}>
                                                                             XÁC NHẬN
                                                                         </Button>
-                                                                    </div>
+                                                                    </div> */}
                                                                 </div>
                                                             </div>
                                                         </div>
                                                     )}
                                                 >
-                                                    <div style={{ float: 'right' }}>
+                                                    <div style={{ marginRight: '10px' }}>
                                                         <div className={cx('item-info-group_type-title')}>
                                                             <span>Phân loại hàng:</span>
                                                             <button className={cx('item-info-group_type-btn')}></button>

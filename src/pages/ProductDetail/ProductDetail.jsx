@@ -24,7 +24,7 @@ import RatingStar from '~/components/RatingStar';
 import video from '~/assets/videos/video.mp4';
 import CarouselCustom from '~/components/Carousel';
 import images from '~/assets/images';
-import { toastError, toastInfo, toastSuccess } from '~/assets/js/toast-message';
+import { toastError, toastInfo, toastSuccess, toastWarning } from '~/assets/js/toast-message';
 
 //service
 import * as productService from '~/services/productService';
@@ -42,9 +42,10 @@ function ProductDetail(props) {
     const dispatch = useDispatch();
     const { id } = useParams();
     const [productDetail, setProductDetail] = useState({});
-    const [currentModelSelect, setCurrentModelSelect] = useState('');
+    const [currentImageModelSelect, setCurrentImageModelSelect] = useState('');
     const [modelCart, setModelCart] = useState({});
-    const [childModels, setChildModels] = useState([]);
+    const [tierModelsParent, setTierModelsParent] = useState({});
+    const [tierModelsChild, setTierModelsChild] = useState({});
     const videoEl = useRef(null);
 
     const isParams = () => {
@@ -83,20 +84,25 @@ function ProductDetail(props) {
 
     const checkSelect = (key, value) => {
         const model = modelCart.tierModel.find((a) => a.name === key);
-        if (model.currentModel.id === value) {
-            return 'active';
-        }
-        return '';
+        return model && model.currentModel.id === value;
     };
 
-    const handleSelectModel = (key, model) => {
-        setModelCart((preState) => {
-            const indexTierModel = preState.tierModel.findIndex((item) => item.name === key);
-            const tierModel = preState.tierModel[indexTierModel];
-            tierModel.currentModel = { id: model.id, name: model.name };
-            preState.tierModel[indexTierModel] = tierModel;
-            return { ...modelCart, tierModel: preState.tierModel };
-        });
+    const handleSelectModel = (key, model, tierModelId = '', type = 1) => {
+        if (type !== 1) {
+            const tierModelObj = { id: tierModelId, name: key, currentModel: { id: model.id, name: model.name } };
+            setModelCart((preState) => {
+                preState.tierModel.length = 1;
+                return { ...modelCart, tierModel: [...preState.tierModel, tierModelObj] };
+            });
+        } else {
+            if (model.id !== modelCart.tierModel[0].currentModel.id) {
+                setModelCart((preState) => {
+                    preState.tierModel.length = 1;
+                    preState.tierModel[0].currentModel = { id: model.id, name: model.name };
+                    return { ...preState };
+                });
+            }
+        }
     };
 
     const likeProduct = async () => {
@@ -104,16 +110,31 @@ function ProductDetail(props) {
     };
 
     const handleAddCart = async () => {
-        const req = await cartService.create(modelCart);
-        if (req.status === 201) {
-            toastSuccess('Add Item Into Cart Successfully!');
-            const req = await cartService.getAll();
+        if (productDetail.tierModels.length === modelCart.tierModel.length) {
+            const req = await cartService.create(modelCart);
             if (req.status === 201) {
-                dispatch(getAllCart(req.data));
+                toastSuccess('Thêm thành công!');
+                const req = await cartService.getAll();
+                if (req.status === 201) {
+                    dispatch(getAllCart(req.data));
+                }
+            } else {
+                toastError('Thêm thất bại');
             }
         } else {
-            toastError('Add Item Into Cart Fail!');
+            toastWarning('Vui lòng chọn đủ thông tin sản phẩm!');
         }
+    };
+
+    const insertInertHtml = (selectorId, content) => {
+        const el = document.getElementById(selectorId);
+        if (el) {
+            el.innerHTML = content;
+        }
+    };
+
+    const checkDisable = (key) => {
+        return !(modelCart.tierModel[0].currentModel.name === key);
     };
 
     useEffect(() => {
@@ -127,32 +148,54 @@ function ProductDetail(props) {
 
         const getProductById = async () => {
             const req = await productService.getProductById(id);
-            if (req.status === 200) {
+            if (req.status === 200 || req.status === 201) {
                 setProductDetail(req.data);
-                setCurrentModelSelect(req.data.image.path);
+                // setCurrentModelSelect(req.data.image.path);
 
                 const { id, name, image, price, priceBeforeDiscount, tierModels, discount } = req.data;
                 const product = { id, name, imagePath: image.path, price, priceBeforeDiscount, discount, quantity: 1 };
                 var tierModel = [];
-                if (tierModels && tierModels.length) {
-                    tierModels.forEach((item, index) => {
-                        const { id, name, models } = item;
-                        tierModel.push({
-                            id,
-                            name,
-                            currentModel: { id: models[0].id, name: models[0].name },
-                        });
+                if (tierModels && tierModels.length > 0) {
+                    // tierModels.forEach((item) => {
+                    //     const { id, name, models } = item;
+                    //     tierModel.push({
+                    //         id,
+                    //         name,
+                    //         currentModel: { id: models[0].id, name: models[0].name },
+                    //     });
+                    // });
+                    setTierModelsParent(tierModels[0]);
+                    const { id, name, models } = tierModels[0];
+                    tierModel.push({
+                        id,
+                        name,
+                        currentModel: { id: models[0].id, name: models[0].name },
                     });
+
+                    if (tierModels.length > 1) {
+                        setTierModelsChild(tierModels[1]);
+                        const { id, name, models } = tierModels[1];
+                        const childModel = models.find((a) => a.parent === tierModels[0].models[0].name);
+                        if (childModel) {
+                            tierModel.push({
+                                id,
+                                name,
+                                currentModel: { id: childModel.id, name: childModel.name },
+                            });
+                        }
+                    }
                 }
+
                 setModelCart({ product, tierModel });
             }
         };
 
         getProductById();
         attemptPlay();
+
         // eslint-disable-next-line react-hooks/exhaustive-deps
     }, [id]);
-    console.log(modelCart);
+
     return (
         <div className="app__container">
             <div className="grid app__content">
@@ -212,26 +255,60 @@ function ProductDetail(props) {
                         </div>
 
                         {/* list tier model */}
-                        {/* {Object.keys(productDetail).length &&
-                            Object.keys(productDetail.tierModels).length &&
-                            productDetail.tierModels.map((item, index) => (
-                                <div key={index} className={cx('group-color-swapper')}>
-                                    <label className={cx('group-color-label')}>{item.name}</label>
-                                    <div className={cx('group-color-list')}>
-                                        {item.models.map((model, index) => (
-                                            <Button
-                                                disabled={model.parent === modelCart.name}
-                                                key={index}
-                                                normal
-                                                border
-                                                className={cx(
-                                                    'group-color-list__item',
-                                                    checkSelect(item.name, model.id),
-                                                )}
-                                                onClick={() => handleSelectModel(item.name, model)}
-                                            >
-                                                {model.name}
-                                                {checkSelect(item.name, model.id) && (
+
+                        {Object.keys(tierModelsParent).length > 0 && (
+                            <div className={cx('group-color-swapper')}>
+                                <label className={cx('group-color-label')}>{tierModelsParent.name}</label>
+                                <div className={cx('group-color-list')}>
+                                    {tierModelsParent.models.map((model, index) => (
+                                        <Button
+                                            key={index}
+                                            normal
+                                            border
+                                            className={cx(
+                                                'group-color-list__item',
+                                                checkSelect(tierModelsParent.name, model.id) && 'active',
+                                            )}
+                                            onClick={() => handleSelectModel(tierModelsParent.name, model)}
+                                        >
+                                            {model.name}
+                                            {checkSelect(tierModelsParent.name, model.id) && (
+                                                <div className={cx('group-color-list__item--tick')}>
+                                                    <FontAwesomeIcon
+                                                        icon={faCheck}
+                                                        className={cx('group-color-list__item-icon')}
+                                                    />
+                                                </div>
+                                            )}
+                                        </Button>
+                                    ))}
+                                </div>
+                            </div>
+                        )}
+
+                        {Object.keys(tierModelsChild).length > 0 && (
+                            <div className={cx('group-color-swapper')}>
+                                <label className={cx('group-color-label')}>{tierModelsChild.name}</label>
+                                <div className={cx('group-color-list')}>
+                                    {tierModelsChild.models.map((model, index) => (
+                                        <Button
+                                            disabled={checkDisable(model.parent)}
+                                            key={index}
+                                            normal
+                                            border
+                                            className={cx(
+                                                'group-color-list__item',
+                                                checkSelect(tierModelsChild.name, model.id) &&
+                                                    !checkDisable(model.parent) &&
+                                                    'active',
+                                            )}
+                                            onClick={() =>
+                                                handleSelectModel(tierModelsChild.name, model, tierModelsChild.id, 2)
+                                            }
+                                        >
+                                            {model.name}
+                                            {checkSelect(tierModelsChild.name, model.id) &&
+                                                !checkDisable(model.parent) && (
                                                     <div className={cx('group-color-list__item--tick')}>
                                                         <FontAwesomeIcon
                                                             icon={faCheck}
@@ -239,84 +316,11 @@ function ProductDetail(props) {
                                                         />
                                                     </div>
                                                 )}
-                                            </Button>
-                                        ))}
-                                    </div>
-                                </div>
-                            ))} */}
-
-                        {Object.keys(productDetail).length &&
-                            Object.keys(productDetail.tierModels).length &&
-                            <div className={cx('group-color-swapper')}>
-                                <label className={cx('group-color-label')}>{productDetail.tierModels[0].name}</label>
-                                <div className={cx('group-color-list')}>
-                                    {productDetail.tierModels[0].models.map((model, index) => (
-                                        <Button
-                                            disabled={model.parent === modelCart.name}
-                                            key={index}
-                                            normal
-                                            border
-                                            className={cx(
-                                                'group-color-list__item',
-                                                checkSelect(productDetail.tierModels[0].name, model.id),
-                                            )}
-                                            onClick={() => handleSelectModel(productDetail.tierModels[0].name, model)}
-                                        >
-                                            {model.name}
-                                            {checkSelect(productDetail.tierModels[0].name, model.id) && (
-                                                <div className={cx('group-color-list__item--tick')}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        className={cx('group-color-list__item-icon')}
-                                                    />
-                                                </div>
-                                            )}
                                         </Button>
                                     ))}
                                 </div>
-                            </div>}
-
-                        {Object.keys(productDetail).length &&
-                            Object.keys(productDetail.tierModels).length &&
-                            <div className={cx('group-color-swapper')}>
-                                <label className={cx('group-color-label')}>{productDetail.tierModels[1].name}</label>
-                                <div className={cx('group-color-list')}>
-                                    {productDetail.tierModels[1].models.map((model, index) => (
-                                        <Button
-                                            disabled={model.parent === modelCart.tierModel[0].currentModel.name}
-                                            key={index}
-                                            normal
-                                            border
-                                            className={cx(
-                                                'group-color-list__item',
-                                                checkSelect(productDetail.tierModels[1].name, model.id),
-                                            )}
-                                            onClick={() => handleSelectModel(productDetail.tierModels[1].name, model)}
-                                        >
-                                            {model.name}
-                                            {/* {checkSelect(productDetail.tierModels[1].name, model.id)&& (
-                                                <div className={cx('group-color-list__item--tick')}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        className={cx('group-color-list__item-icon')}
-                                                    />
-                                                </div>
-                                            )} */}
-                                            {model.parent === modelCart.tierModel[0].currentModel.name && (
-                                                <div className={cx('group-color-list__item--tick')}>
-                                                    <FontAwesomeIcon
-                                                        icon={faCheck}
-                                                        className={cx('group-color-list__item-icon')}
-                                                    />
-                                                </div>
-                                            )}
-
-                                        </Button>
-                                    ))}
-                                </div>
-                            </div>}
-
-
+                            </div>
+                        )}
 
                         <div className={cx('group-quantity-swapper')}>
                             <div className={cx('group-quantity-label')}>Số Lượng</div>
@@ -405,7 +409,9 @@ function ProductDetail(props) {
 
                             <div className={cx('product-detail__description')}>
                                 <div className={cx('description-header')}>MÔ TẢ SẢN PHẨM</div>
-                                <div className={cx('description-content')}>MÔ TẢ SẢN PHẨM</div>
+                                <div className={cx('description-content')} id="description">
+                                    {insertInertHtml('description', productDetail.description)}
+                                </div>
                             </div>
                         </div>
 
