@@ -72,7 +72,7 @@ function SideBarFilter() {
             goPageSearch(stringQuey)
         }
     };
-
+    console.log(objSearch);
 
     return (
         <>

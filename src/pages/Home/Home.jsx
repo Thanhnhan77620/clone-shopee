@@ -131,7 +131,7 @@ function Home() {
                 <div className="grid">
                     <Category data={categories} />
                     <Banner type="horizontal" data={listHorizontal} />
-                    <Brand listBanner={listHorizontal} />
+                    {/* <Brand listBanner={listHorizontal} /> */}
                     <div className={cx('section-suggest')}>
                         {/* <div className={cx('section-suggest-header')}>
                             <div className={cx('section-suggest-header__title')}>gợi ý hôm nay</div>
