@@ -119,7 +119,7 @@ function Profile() {
                             <div className={cx('form-label')}>Tên Đăng Nhập</div>
                             <div className={cx('form-content')}>
                                 <div className={cx('form-content__output')}>
-                                    {userLogin.userName || 'thanhnhan026777'}
+                                    {userLogin.userNam}
                                 </div>
                             </div>
                         </div>
@@ -262,12 +262,12 @@ function Profile() {
                                             day: cx('dropdown-selected'),
                                         }
                                     }
-                                    // optional
-                                    // defaultValues={{
-                                    //     day: 'Select day',
-                                    //     month: 'Select month',
-                                    //     year: 'Select year',
-                                    // }}
+                                // optional
+                                // defaultValues={{
+                                //     day: 'Select day',
+                                //     month: 'Select month',
+                                //     year: 'Select year',
+                                // }}
                                 />
                             </div>
                         </div>

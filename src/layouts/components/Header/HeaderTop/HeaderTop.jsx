@@ -171,7 +171,7 @@ function HeaderTop() {
                                     className={cx('header__navbar-user-avatar')}
                                 />
                                 <span className={cx('header__navbar-user-name')}>
-                                    {userLogin.username || 'thanhnhan02677'}
+                                    {userLogin.username}
                                 </span>
                             </Link>
 

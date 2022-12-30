@@ -6,6 +6,7 @@ import { faPen } from '@fortawesome/free-solid-svg-icons';
 import styles from './SideBarUser.module.scss';
 import images from '~/assets/images';
 import config from '~/config';
+import { useSelector } from 'react-redux';
 
 const cx = classnames.bind(styles);
 function SideBarUser(props) {
@@ -17,6 +18,7 @@ function SideBarUser(props) {
             checkBox.checked = false;
         }
     };
+    const { userLogin } = useSelector((state) => state.auth);
     return (
         <div className={cx('sidebar_container')}>
             {/* User group */}
@@ -28,7 +30,7 @@ function SideBarUser(props) {
                 />
 
                 <div className={cx('sidebar-user-group')}>
-                    <div className={cx('sidebar-user-group__username')}>thanhnhan02677</div>
+                    <div className={cx('sidebar-user-group__username')}>{userLogin.userName}</div>
                     <Link to={config.routes.user.profile} className={cx('sidebar-user-group__edit')}>
                         <FontAwesomeIcon icon={faPen} /> Sửa Hồ Sơ
                     </Link>
