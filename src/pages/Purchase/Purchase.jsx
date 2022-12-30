@@ -169,7 +169,8 @@ function Purchase() {
                                     <div className={cx('bottom-control-status')}>{getCancelBy(order.params)}</div>
                                     <div className={cx('bottom-control-group')}>
                                         {order.status === SUCCESSFUL && (
-                                            <Button primary className={cx('bottom-control-group_btnRebuy')}>
+                                            <Button primary className={cx('bottom-control-group_btnRebuy')}
+                                                onClick={() => handleShowPopupComment(order)}>
                                                 Đánh giá
                                             </Button>
                                         )}
