@@ -409,8 +409,8 @@ function ProductDetail(props) {
                 {/* Product detail content */}
                 <div className={cx('product-detail-swapper')}>
                     <div className={cx('product-detail__left')}>
-                        {/* <div className="card-layout">
-                            <div className={cx('product-detail__description')}>
+                        <div className="card-layout">
+                            {/* <div className={cx('product-detail__description')}>
                                 <div className={cx('description-header')}>CHI TIẾT SẢN PHẨM</div>
                                 <div className={cx('description-content')}>
                                     {data.map((item) => (
@@ -420,7 +420,7 @@ function ProductDetail(props) {
                                         </div>
                                     ))}
                                 </div>
-                            </div>
+                            </div> */}
 
                             <div className={cx('product-detail__description')}>
                                 <div className={cx('description-header')}>MÔ TẢ SẢN PHẨM</div>
@@ -428,7 +428,7 @@ function ProductDetail(props) {
                                     {insertInertHtml('description', productDetail.description)}
                                 </div>
                             </div>
-                        </div> */}
+                        </div>
 
                         <FilterComment />
                     </div>
