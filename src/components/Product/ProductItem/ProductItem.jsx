@@ -8,6 +8,7 @@ import { formatMoney } from '~/utils';
 
 const cx = classnames.bind(styles);
 function ProductItem({ item }) {
+    console.log(item);
     return (
         <Link to={`/product/${item.id}`} className={cx('product-item')}>
             {/* <!-- Product image --> */}
@@ -40,13 +41,13 @@ function ProductItem({ item }) {
                         )}
                     </span>
 
-                    <div className={cx('product-item__rating')}>
+                    {/* <div className={cx('product-item__rating')}>
                         <FontAwesomeIcon icon={faStar} className={cx('active')} />
                         <FontAwesomeIcon icon={faStar} className={cx('active')} />
                         <FontAwesomeIcon icon={faStar} />
                         <FontAwesomeIcon icon={faStar} />
                         <FontAwesomeIcon icon={faStar} />
-                    </div>
+                    </div> */}
 
                     <span className={cx('product-item__sold')}>Đã bán {item.sold}</span>
                 </div>

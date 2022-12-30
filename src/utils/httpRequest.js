@@ -20,11 +20,9 @@ export const get = async (path, option = {}) => {
 export const post = async (path, option = {}, config = {}) => {
     try {
         const response = await httpRequest.post(path, option, config);
-        console.log(response);
         const { data, status } = response;
         return { data, status };
     } catch (error) {
-        console.log(error);
         const { errors, statusCode } = error.response.data;
         return { errors, status: statusCode };
     }

@@ -36,6 +36,7 @@ import { addItem, getAllCart } from '~/slices/cartSlice';
 
 //style
 import styles from './ProductDetail.module.scss';
+import { formatMoney } from '~/utils';
 
 const cx = classnames.bind(styles);
 function ProductDetail(props) {
@@ -213,7 +214,7 @@ function ProductDetail(props) {
     return (
         <div className="app__container">
             <div className="grid app__content">
-                <Breadcrumb />
+                {/* <Breadcrumb /> */}
                 {/* Product info */}
                 <div className={cx('card-layout', 'product-info-swapper')}>
                     <div className={cx('product-info-left')}>
@@ -258,10 +259,10 @@ function ProductDetail(props) {
                         <div className={cx('group-price-swapper')}>
                             <div className={cx('group-price')}>
                                 {productDetail.discount > 0 && (
-                                    <div className={cx('group-price__old')}>{productDetail.priceBeforeDiscount}₫</div>
+                                    <div className={cx('group-price__old')}>{formatMoney(productDetail.priceBeforeDiscount)}</div>
                                 )}
 
-                                <div className={cx('group-price__new')}>{productDetail.price}₫</div>
+                                <div className={cx('group-price__new')}>{formatMoney(productDetail.price)}</div>
                                 {productDetail.discount > 0 && (
                                     <div className={cx('group-price__sale')}>{productDetail.discount}% GIẢM</div>
                                 )}
@@ -313,8 +314,8 @@ function ProductDetail(props) {
                                             className={cx(
                                                 'group-color-list__item',
                                                 checkSelect(tierModelsChild.name, model.id) &&
-                                                    !checkDisable(model.parent) &&
-                                                    'active',
+                                                !checkDisable(model.parent) &&
+                                                'active',
                                             )}
                                             onClick={() =>
                                                 handleSelectModel(tierModelsChild.name, model, tierModelsChild.id, 2)
@@ -408,7 +409,7 @@ function ProductDetail(props) {
                 {/* Product detail content */}
                 <div className={cx('product-detail-swapper')}>
                     <div className={cx('product-detail__left')}>
-                        <div className="card-layout">
+                        {/* <div className="card-layout">
                             <div className={cx('product-detail__description')}>
                                 <div className={cx('description-header')}>CHI TIẾT SẢN PHẨM</div>
                                 <div className={cx('description-content')}>
@@ -427,9 +428,8 @@ function ProductDetail(props) {
                                     {insertInertHtml('description', productDetail.description)}
                                 </div>
                             </div>
-                        </div>
+                        </div> */}
 
-                        {/* filter rating comment */}
                         <FilterComment />
                     </div>
                     <div className={cx('product-detail__right')}>
