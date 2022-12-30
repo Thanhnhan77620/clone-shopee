@@ -14,7 +14,7 @@ import styles from './TopSearchItem.module.scss';
 const cx = classnames.bind(styles);
 
 function TopSearchItem({ item }) {
-    let params = { page: 1, limit: 5 };
+    let params = { page: 1, limit: 1000 };
     const navigate = useNavigate();
     const dispatch = useDispatch();
 

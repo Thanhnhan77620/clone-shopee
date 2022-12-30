@@ -5,10 +5,10 @@ import { Link } from 'react-router-dom';
 
 import Button from '../Button';
 
-import styles from './ResultSearch.module.scss';
+
 import ProductItem from '../Product/ProductItem';
 import { useSelector } from 'react-redux';
-
+import styles from './ResultSearch.module.scss';
 const cx = classnames.bind(styles);
 function ResultSearch({ data = [] }) {
     const { resultSearchProduct } = useSelector((state) => state.product);
@@ -76,7 +76,7 @@ function ResultSearch({ data = [] }) {
             </div>
 
             {/* <!-- Pagination --> */}
-            <ul className={cx('pagination', 'pagination-wrapper')}>
+            {/* <ul className={cx('pagination', 'pagination-wrapper')}>
                 <li className="pagination-item ">
                     <Link to="/" className="pagination-item__link">
                         <FontAwesomeIcon icon={faAngleLeft} className="pagination-item__icon" />
@@ -112,7 +112,7 @@ function ResultSearch({ data = [] }) {
                         <FontAwesomeIcon icon={faAngleRight} className="pagination-item__icon" />
                     </Link>
                 </li>
-            </ul>
+            </ul> */}
         </>
     );
 }

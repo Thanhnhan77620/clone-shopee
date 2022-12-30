@@ -24,7 +24,7 @@ import { useDispatch } from 'react-redux';
 const cx = classnames.bind(styles);
 
 function SearchBox(props) {
-    let params = { page: 1, limit: 5 };
+    let params = { page: 1, limit: 1000 };
 
     const queryParameters = new URLSearchParams(window.location.search);
     const keyword = queryParameters.get('keyword');

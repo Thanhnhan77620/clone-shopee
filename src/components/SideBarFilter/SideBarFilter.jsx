@@ -14,7 +14,7 @@ import { searching } from '~/slices/productSlice';
 
 const cx = classnames.bind(styles);
 function SideBarFilter() {
-    let params = { page: 1, limit: 5 };
+    let params = { page: 1, limit: 1000 };
     const url = new URL(window.location.href);
 
     const { categories } = useSelector((state) => state.category);
